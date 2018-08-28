@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Екатерина Мартова](https://up.htmlacademy.ru/javascript/15/user/600361).
-* Наставник: `Неизвестно`.
+* Наставник: `Дмитрий Донецкий` (https://up.htmlacademy.ru/javascript/15/user/497669).
 
 ---
 
