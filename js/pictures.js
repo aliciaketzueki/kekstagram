@@ -40,7 +40,7 @@ var selectRandomElement = function (arr) {
   }
   return element;
 };
-// ДОДЕЛАТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// ДОДЕЛАТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! vvv
 var comments = [];
 var commentsQuantity = createArr(0, getRandomArbitary(1, 2));
 for (var j = 0; j < commentsQuantity.length; j++) {
@@ -66,7 +66,27 @@ var createPhotosArr = function () {
   var photos = createArr(0, 25, photo);
   return photos;
 }
-
-console.log(createPhotosArr());
+var photos = createPhotosArr();
+console.log(photos);
 
 // Задача 2
+var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+
+var createDomElements = function () {
+  var pictureItem = pictureTemplate.cloneNode(true);
+  pictureItem.querySelector('.picture__img').src = photos.url;
+  pictureItem.querySelector('.picture__likes').textContent = photos.likes;
+  pictureItem.querySelector('.picture__comments').textContent = photos.comments;
+  return pictureItem;
+}
+/*
+На основе данных, созданных в предыдущем пункте и шаблона #picture создайте DOM-элементы, соответствующие фотографиям и заполните их данными из массива:
+
+Адрес изображения url подставьте как src изображения.
+Количество лайков likes подставьте как текстовое содержание элемента .picture__likes.
+Количество комментариев comments подставьте как текстовое содержание элемента .picture__stat--comments.
+*/
+
+// Задача 3
+
+// Задача 4
