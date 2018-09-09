@@ -5,10 +5,13 @@ var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-var createArr = function (arrStart, arrLength) {
+var createArr = function (arrStart, arrLength, object) {
   var arr = [];
   for (var i = arrStart; i < arrLength; i++) {
     arr[i] = i;
+    if (object) {
+      arr[i] = object;
+    }
   }
   return arr;
 };
@@ -30,19 +33,18 @@ var commentsArr = [
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
 
-var commentsQuantity = createArr(0, getRandomArbitary(1, 2));
-var renderComments = function (arr) {
-  var comment;
+var selectRandomElement = function (arr) {
+  var element;
   for (var i = 0; i < arr.length; i++) {
-    comment = arr[getRandomArbitary(0, arr.length - 1)];
+    element = arr[getRandomArbitary(0, arr.length - 1)];
   }
-  return comment;
+  return element;
 };
-
+// ДОДЕЛАТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 var comments = [];
-
+var commentsQuantity = createArr(0, getRandomArbitary(1, 2));
 for (var j = 0; j < commentsQuantity.length; j++) {
-  comments[j] = renderComments(commentsArr);
+  comments[j] = selectRandomElement(commentsArr);
 }
 
 var descriptionArr = [
@@ -54,21 +56,17 @@ var descriptionArr = [
   'Вот это тачка!'
 ];
 
-var photo = {
-  url: 'photos/' + renderPictureIndex(pictureIndex, 1, 25) + '.jpg',
-  likes: getRandomArbitary(15, 200),
-  comments,
-  description: renderComments(descriptionArr)
-};
-console.log(photo);
-
-var photos = [];
-var getPhotosArr = function () {
-  photos = createArr(0, 25);
+var createPhotosArr = function () {
+  var photo = {
+    url: 'photos/' + renderPictureIndex(pictureIndex, 1, 25) + '.jpg',
+    likes: getRandomArbitary(15, 200),
+    comments,
+    description: selectRandomElement(descriptionArr)
+  };
+  var photos = createArr(0, 25, photo);
   return photos;
-};
-/*
-1. Создать объект
-2. Создать функцию добавления объектов в массив
-*/
+}
+
+console.log(createPhotosArr());
+
 // Задача 2
