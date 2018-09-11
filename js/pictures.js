@@ -18,10 +18,11 @@ var createArr = function (arrStart, arrLength, object) {
 
 var pictureIndex = createArr(1, 26);
 
-var renderPictureIndex = function (arr, min, max) {
-  var rand = getRandomArbitary(min, max);
+var renderPictureIndex = function (arr) {
+  var rand = getRandomArbitary(1, arr.length - 1);
+  var randomElement = arr[rand];
   arr.splice(rand, 1);
-  return rand;
+  return randomElement;
 };
 
 var commentsArr = [
@@ -40,12 +41,19 @@ var selectRandomElement = function (arr) {
   }
   return element;
 };
-// ДОДЕЛАТЬ!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! vvv
+
+var commentsQuantity = getRandomArbitary(6, 200);
 var comments = [];
-var commentsQuantity = createArr(0, getRandomArbitary(1, 2));
-for (var j = 0; j < commentsQuantity.length; j++) {
-  comments[j] = selectRandomElement(commentsArr);
-}
+var createComments = function () {
+  for (var i = 0; i < commentsQuantity; i++) {
+    comments[i] = selectRandomElement(commentsArr);
+  }
+  return comments;
+};
+/*
+var comments = createArr(0, commentsQuantity, selectRandomElement(commentsArr));
+*/
+
 
 var descriptionArr = [
   'Тестим новую камеру!',
@@ -56,37 +64,63 @@ var descriptionArr = [
   'Вот это тачка!'
 ];
 
-var createPhotosArr = function () {
+var photos = [];
+for (var i = 0; i < 25; i++) {
   var photo = {
-    url: 'photos/' + renderPictureIndex(pictureIndex, 1, 25) + '.jpg',
+    url: 'photos/' + renderPictureIndex(pictureIndex) + '.jpg',
     likes: getRandomArbitary(15, 200),
-    comments,
+    comments: createComments(),
     description: selectRandomElement(descriptionArr)
   };
-  var photos = createArr(0, 25, photo);
-  return photos;
+  photos[i] = photo;
 }
-var photos = createPhotosArr();
-console.log(photos);
 
 // Задача 2
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+var pictureDestination = document.querySelector('.pictures');
 
-var createDomElements = function () {
+var createDomElements = function (arr) {
   var pictureItem = pictureTemplate.cloneNode(true);
-  pictureItem.querySelector('.picture__img').src = photos.url;
-  pictureItem.querySelector('.picture__likes').textContent = photos.likes;
-  pictureItem.querySelector('.picture__comments').textContent = photos.comments;
+  pictureItem.querySelector('.picture__img').src = arr.url;
+  pictureItem.querySelector('.picture__likes').textContent = arr.likes;
+  pictureItem.querySelector('.picture__comments').textContent = arr.comments;
   return pictureItem;
 }
-/*
-На основе данных, созданных в предыдущем пункте и шаблона #picture создайте DOM-элементы, соответствующие фотографиям и заполните их данными из массива:
-
-Адрес изображения url подставьте как src изображения.
-Количество лайков likes подставьте как текстовое содержание элемента .picture__likes.
-Количество комментариев comments подставьте как текстовое содержание элемента .picture__stat--comments.
-*/
 
 // Задача 3
+var addElements = function (elements) {
+  var fragment = document.createDocumentFragment();
+  for (var i = 0; i < elements.length; i++) {
+    fragment.appendChild(createDomElements(elements[i]));
+  }
+  pictureDestination.appendChild(fragment);
+}
+addElements(photos);
 
 // Задача 4
+var bigPicture = document.querySelector('.big-picture');
+bigPicture.classList.remove('hidden');
+
+var getBigPictureProperties = function () {
+  bigPicture.querySelector('.big-picture__img').querySelector('img').src = photos[0].url;
+  bigPicture.querySelector('.likes-count').textContent = photos[0].likes;
+  bigPicture.querySelector('.social__caption').textContent = photos[0].description;
+  bigPicture.querySelector('.comments-count').textContent = photos[0].comments.length;
+};
+
+getBigPictureProperties();
+
+var getBigPictureComments = function () {
+  var bigPictureComments = bigPicture.querySelector('.social__comments');
+  var bigPictureComment = bigPictureComments.querySelectorAll('.social__comment');
+  for (var i = 0; i < bigPictureComment.length; i++) {
+    bigPictureComment[i].querySelector('.social__picture').src = "img/avatar-" + getRandomArbitary(1, 6) + ".svg";
+    bigPictureComment[i].querySelector('.social__text').textContent = photos[i].comments[i];
+  }
+};
+
+getBigPictureComments();
+
+// Задача 5
+document.querySelector('.social__comment-count').classList.add('visually-hidden');
+document.querySelector('.comments-loader').classList.add('visually-hidden');
