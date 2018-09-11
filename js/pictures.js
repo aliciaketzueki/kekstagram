@@ -65,15 +65,19 @@ var descriptionArr = [
 ];
 
 var photos = [];
-for (var i = 0; i < 25; i++) {
-  var photo = {
-    url: 'photos/' + renderPictureIndex(pictureIndex) + '.jpg',
-    likes: getRandomArbitary(15, 200),
-    comments: createComments(),
-    description: selectRandomElement(descriptionArr)
-  };
-  photos[i] = photo;
-}
+var createPhotos = function () {
+  for (var i = 0; i < 25; i++) {
+    var photo = {
+      url: 'photos/' + renderPictureIndex(pictureIndex) + '.jpg',
+      likes: getRandomArbitary(15, 200),
+      comments: createComments(),
+      description: selectRandomElement(descriptionArr)
+    };
+    photos[i] = photo;
+  }
+};
+
+createPhotos();
 
 // Задача 2
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
@@ -85,16 +89,16 @@ var createDomElements = function (arr) {
   pictureItem.querySelector('.picture__likes').textContent = arr.likes;
   pictureItem.querySelector('.picture__comments').textContent = arr.comments;
   return pictureItem;
-}
+};
 
 // Задача 3
 var addElements = function (elements) {
   var fragment = document.createDocumentFragment();
-  for (var i = 0; i < elements.length; i++) {
-    fragment.appendChild(createDomElements(elements[i]));
+  for (var j = 0; j < elements.length; j++) {
+    fragment.appendChild(createDomElements(elements[j]));
   }
   pictureDestination.appendChild(fragment);
-}
+};
 addElements(photos);
 
 // Задача 4
@@ -114,7 +118,7 @@ var getBigPictureComments = function () {
   var bigPictureComments = bigPicture.querySelector('.social__comments');
   var bigPictureComment = bigPictureComments.querySelectorAll('.social__comment');
   for (var i = 0; i < bigPictureComment.length; i++) {
-    bigPictureComment[i].querySelector('.social__picture').src = "img/avatar-" + getRandomArbitary(1, 6) + ".svg";
+    bigPictureComment[i].querySelector('.social__picture').src = 'img/avatar-' + getRandomArbitary(1, 6) + '.svg';
     bigPictureComment[i].querySelector('.social__text').textContent = photos[i].comments[i];
   }
 };
