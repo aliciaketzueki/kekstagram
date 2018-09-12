@@ -50,10 +50,6 @@ var createComments = function () {
   }
   return comments;
 };
-/*
-var comments = createArr(0, commentsQuantity, selectRandomElement(commentsArr));
-*/
-
 
 var descriptionArr = [
   'Тестим новую камеру!',
