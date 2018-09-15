@@ -1,6 +1,6 @@
 'use strict';
 
-// Задача 1
+// Задача 1.1
 var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
@@ -75,7 +75,7 @@ var createPhotos = function () {
 
 createPhotos();
 
-// Задача 2
+// Задача 1.2
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 var pictureDestination = document.querySelector('.pictures');
 
@@ -87,7 +87,7 @@ var createDomElements = function (arr) {
   return pictureItem;
 };
 
-// Задача 3
+// Задача 1.3
 var addElements = function (elements) {
   var fragment = document.createDocumentFragment();
   for (var j = 0; j < elements.length; j++) {
@@ -97,7 +97,8 @@ var addElements = function (elements) {
 };
 addElements(photos);
 
-// Задача 4
+// Задача 1.4
+/*
 var bigPicture = document.querySelector('.big-picture');
 bigPicture.classList.remove('hidden');
 
@@ -120,7 +121,34 @@ var getBigPictureComments = function () {
 };
 
 getBigPictureComments();
+*/
+// Задача 1.5
+var ESC_KEYDOWN = 27;
+var ENTER_KEYDOWN = 13;
 
-// Задача 5
 document.querySelector('.social__comment-count').classList.add('visually-hidden');
 document.querySelector('.comments-loader').classList.add('visually-hidden');
+
+// Задача 2.1
+var uploadFile = document.getElementById('upload-file');
+var imgUpload = document.querySelector('.img-upload__overlay');
+var imgUploadCancel = document.querySelector('.img-upload__cancel');
+var onImgUploadEscPress = function (evt) {
+  if (evt.keyCode === ESC_KEYDOWN) {
+    imgUpload.classList.add('hidden');
+  }
+};
+
+
+uploadFile.addEventListener('change', function () {
+  imgUpload.classList.remove('hidden');
+
+  document.addEventListener('keydown', onImgUploadEscPress);
+});
+
+imgUploadCancel.addEventListener('click', function () {
+  imgUpload.classList.add('hidden');
+  document.removeEventListener('keydown', onImgUploadEscPress);
+});
+
+// Задача 2.2
