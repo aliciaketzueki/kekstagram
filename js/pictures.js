@@ -42,11 +42,15 @@ var selectRandomElement = function (arr) {
   return element;
 };
 
-var commentsQuantity = getRandomArbitary(6, 200);
-var comments = [];
 var createComments = function () {
-  for (var i = 0; i < commentsQuantity; i++) {
-    comments[i] = selectRandomElement(commentsArr);
+  var comments = [];
+  var commentsQuantity = 0;
+  for (var j = 0; j < 25; j++) {
+    commentsQuantity = getRandomArbitary(6, 50);
+    for (var i = 0; i < commentsQuantity; i++) {
+      comments[i] = selectRandomElement(commentsArr);
+      comments.length = commentsQuantity;
+    }
   }
   return comments;
 };
@@ -83,7 +87,7 @@ var createDomElements = function (arr) {
   var pictureItem = pictureTemplate.cloneNode(true);
   pictureItem.querySelector('.picture__img').src = arr.url;
   pictureItem.querySelector('.picture__likes').textContent = arr.likes;
-  pictureItem.querySelector('.picture__comments').textContent = arr.comments;
+  pictureItem.querySelector('.picture__comments').textContent = arr.comments.length;
   return pictureItem;
 };
 
@@ -117,13 +121,23 @@ var getBigPictureComments = function () {
   }
 };
 getBigPictureComments();
-
+/*
+Список комментариев под фотографией: коментарии должны вставляться в блок .social__comments. Разметка каждого комментария должна выглядеть так:
+<li class="social__comment">
+  <img class="social__picture" src="img/avatar-
+    {{случайное число от 1 до 6}}.svg"
+    alt="Аватар комментатора фотографии"
+    width="35" height="35">
+    <p class="social__text">{{текст комментария}}</p>
+</li>
+*/
 var viewBigPhoto = function () {
   for (var i = 0; i < bigPictureArr.length; i++) {
     bigPictureArr[i].addEventListener('click', function (evt) {
       for (var j = 0; j < photos.length; j++) {
         if (bigPictureArr[j].querySelector('img') === evt.target) {
           getBigPictureProperties(j);
+          getBigPictureComments();
         }
       }
       bigPicture.classList.remove('hidden');
@@ -131,6 +145,7 @@ var viewBigPhoto = function () {
     });
   }
 }
+
 viewBigPhoto();
 console.log(photos);
 
