@@ -88,28 +88,25 @@ var createDomElements = function (arr) {
 };
 
 // Задача 1.3
-var addElements = function (elements) {
+var addElements = function (elements, destination) {
   var fragment = document.createDocumentFragment();
   for (var j = 0; j < elements.length; j++) {
     fragment.appendChild(createDomElements(elements[j]));
   }
-  pictureDestination.appendChild(fragment);
+  destination.appendChild(fragment);
 };
-addElements(photos);
+addElements(photos, pictureDestination);
 
 // Задача 1.4
-/*
 var bigPicture = document.querySelector('.big-picture');
-bigPicture.classList.remove('hidden');
+var bigPictureArr = document.querySelectorAll('.picture');
 
-var getBigPictureProperties = function () {
-  bigPicture.querySelector('.big-picture__img').querySelector('img').src = photos[0].url;
-  bigPicture.querySelector('.likes-count').textContent = photos[0].likes;
-  bigPicture.querySelector('.social__caption').textContent = photos[0].description;
-  bigPicture.querySelector('.comments-count').textContent = photos[0].comments.length;
+var getBigPictureProperties = function (j) {
+  bigPicture.querySelector('.big-picture__img').querySelector('img').src = photos[j].url;
+  bigPicture.querySelector('.likes-count').textContent = photos[j].likes;
+  bigPicture.querySelector('.social__caption').textContent = photos[j].description;
+  bigPicture.querySelector('.comments-count').textContent = photos[j].comments.length;
 };
-
-getBigPictureProperties();
 
 var getBigPictureComments = function () {
   var bigPictureComments = bigPicture.querySelector('.social__comments');
@@ -119,9 +116,35 @@ var getBigPictureComments = function () {
     bigPictureComment[i].querySelector('.social__text').textContent = photos[i].comments[i];
   }
 };
-
 getBigPictureComments();
-*/
+
+var viewBigPhoto = function () {
+  for (var i = 0; i < bigPictureArr.length; i++) {
+    bigPictureArr[i].addEventListener('click', function (evt) {
+      for (var j = 0; j < photos.length; j++) {
+        if (bigPictureArr[j].querySelector('img') === evt.target) {
+          getBigPictureProperties(j);
+        }
+      }
+      bigPicture.classList.remove('hidden');
+
+    });
+  }
+}
+viewBigPhoto();
+console.log(photos);
+
+var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
+bigPictureCancel.addEventListener('click', function () {
+  bigPicture.classList.add('hidden');
+});
+
+document.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ESC_KEYDOWN) {
+    bigPicture.classList.add('hidden');
+  }
+});
+
 // Задача 1.5
 var ESC_KEYDOWN = 27;
 var ENTER_KEYDOWN = 13;
@@ -132,17 +155,16 @@ document.querySelector('.comments-loader').classList.add('visually-hidden');
 // Задача 2.1
 var uploadFile = document.getElementById('upload-file');
 var imgUpload = document.querySelector('.img-upload__overlay');
-var imgUploadCancel = document.querySelector('.img-upload__cancel');
+var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
+
 var onImgUploadEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYDOWN) {
     imgUpload.classList.add('hidden');
   }
 };
 
-
 uploadFile.addEventListener('change', function () {
   imgUpload.classList.remove('hidden');
-
   document.addEventListener('keydown', onImgUploadEscPress);
 });
 
@@ -152,3 +174,17 @@ imgUploadCancel.addEventListener('click', function () {
 });
 
 // Задача 2.2
+var effectLevelPin = imgUpload.querySelector('.effect-level__pin');
+var scaleControlValue = imgUpload.querySelector('.effect-level__value');
+
+var effectsPreview = imgUpload.querySelectorAll('.effects__preview');
+
+effectLevelPin.addEventListener('mouseup', function () {
+  effectLevelPin.style.left = scaleControlValue.value;
+});
+/*
+Для этого добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
+*/
+
+// Задача 2.3
+
