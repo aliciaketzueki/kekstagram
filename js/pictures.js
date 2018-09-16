@@ -1,5 +1,4 @@
 'use strict';
-
 // 1. Абстрактные (общие) функции
 // 1.1. Выбор случайного числа
 var getRandomArbitary = function (min, max) {
@@ -104,6 +103,7 @@ var addElements = function (elements, destination) {
   }
   destination.appendChild(fragment);
 };
+
 addElements(photos, pictureDestination);
 /* -------------------------- */
 // 4. Редактирование шаблона большой фотографии
@@ -116,7 +116,7 @@ var getBigPictureProperties = function (j) {
   bigPicture.querySelector('.social__caption').textContent = photos[j].description;
   bigPicture.querySelector('.comments-count').textContent = photos[j].comments.length;
 };
-// 4.2.1. Создание DOM-элементов для комментариев
+// 4.2. Создание DOM-элементов для комментариев
 var bigPictureComments = bigPicture.querySelector('.social__comments');
 var bigPictureComment = bigPictureComments.querySelector('.social__comment');
 
@@ -126,7 +126,7 @@ var getBigPictureComments = function (arr) {
   photosComment.querySelector('.social__text').textContent = arr;
   return photosComment;
 };
-// 4.2.2. Добавление DOM-элементов в разметку
+// 4.2.1. Добавление DOM-элементов в разметку
 var addComments = function (j) {
   deleteNodeElements(bigPictureComments);
   var fragment = document.createDocumentFragment();
@@ -136,8 +136,8 @@ var addComments = function (j) {
   bigPictureComments.appendChild(fragment);
 };
 // 4.3. Показ разных больших фотографий при нажатии на маленькие
-var bigPictureArr = document.querySelectorAll('.picture');
 var viewBigPhoto = function () {
+  var bigPictureArr = document.querySelectorAll('.picture');
   for (var i = 0; i < bigPictureArr.length; i++) {
     bigPictureArr[i].addEventListener('click', function (evt) {
       for (var j = 0; j < photos.length; j++) {
@@ -149,6 +149,8 @@ var viewBigPhoto = function () {
       bigPicture.classList.remove('hidden');
     });
   }
+  bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
+  bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
 }
 
 viewBigPhoto();
@@ -169,21 +171,17 @@ document.addEventListener('keydown', function (evt) {
   }
 });
 /* -------------------------- */
-// Задача 1.5
-document.querySelector('.social__comment-count').classList.add('visually-hidden');
-document.querySelector('.comments-loader').classList.add('visually-hidden');
-
-// Задача 2.1
+// 5. Загрузка изображения и показ формы редактирования
 var uploadFile = document.getElementById('upload-file');
 var imgUpload = document.querySelector('.img-upload__overlay');
 var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
-
+// 5.1. Функция нажатия на ESC
 var onImgUploadEscPress = function (evt) {
   if (evt.keyCode === ESC_KEYDOWN) {
     imgUpload.classList.add('hidden');
   }
 };
-
+// 5.2. Показ формы редактирования
 uploadFile.addEventListener('change', function () {
   imgUpload.classList.remove('hidden');
   document.addEventListener('keydown', onImgUploadEscPress);
@@ -193,18 +191,38 @@ imgUploadCancel.addEventListener('click', function () {
   imgUpload.classList.add('hidden');
   document.removeEventListener('keydown', onImgUploadEscPress);
 });
+// 6. Применение эффекта для изображения
+// 6.1. Переключение радиокнопок с эффектами
+var changeEffects = function () {
+  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
+  var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
 
-// Задача 2.2
+  var effectsArr = ['effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat'];
+  
+  for (var i = 0; i < effectsRadioButton.length; i++) {
+    effectsRadioButton[i].addEventListener('click', function (evt) {
+      imgUploadPreview.removeAttribute('class');
+      for (var j = 0; j < effectsArr.length; j++) {
+        if (effectsRadioButton[j] === evt.target)
+          imgUploadPreview.classList.add(effectsArr[j]);
+      }
+    });
+  }
+};
+
+changeEffects();
+/*
 var effectLevelPin = imgUpload.querySelector('.effect-level__pin');
 var scaleControlValue = imgUpload.querySelector('.effect-level__value');
 
-var effectsPreview = imgUpload.querySelectorAll('.effects__preview');
+
 
 effectLevelPin.addEventListener('mouseup', function () {
   effectLevelPin.style.left = scaleControlValue.value;
 });
+*/
 /*
-Для этого добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
+Добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
 */
 
 // Задача 2.3
