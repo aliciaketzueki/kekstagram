@@ -1,21 +1,19 @@
 'use strict';
 
-// Абстрактные функции
+// 1. Абстрактные (общие) функции
+// 1.1. Выбор случайного числа
 var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-
-var createArr = function (arrStart, arrLength, object) {
+// 1.2. Создание массива чисел
+var createArr = function (arrStart, arrLength) {
   var arr = [];
   for (var i = arrStart; i < arrLength; i++) {
     arr[i] = i;
-    if (object) {
-      arr[i] = object;
-    }
   }
   return arr;
 };
-
+// 1.3. Выбор рандомного элемента из массива
 var selectRandomElement = function (arr) {
   var element;
   for (var i = 0; i < arr.length; i++) {
@@ -23,7 +21,15 @@ var selectRandomElement = function (arr) {
   }
   return element;
 };
-// Случайный URL у фотографий
+// 1.4. Удаление Node-элементов
+var deleteNodeElements = function (parent) {
+  while (parent.hasChildNodes()) {
+    parent.removeChild(parent.lastChild);
+  }
+};
+/* -------------------------- */
+// 2. Создание массива фотографий
+// 2.1. Генерация случайного URL у фотографий
 var pictureIndex = createArr(1, 26);
 var renderPictureIndex = function (arr) {
   var rand = getRandomArbitary(1, arr.length - 1);
@@ -31,7 +37,7 @@ var renderPictureIndex = function (arr) {
   arr.splice(rand, 1);
   return randomElement;
 };
-// Массив комментарий и создание случайного количества комментариев к фото
+// 2.2. Массив комментарий
 var commentsArr = [
   'Всё отлично!',
   'В целом всё неплохо. Но не всё.',
@@ -40,7 +46,7 @@ var commentsArr = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-
+// 2.2.1. Cоздание случайного количества комментариев к фото
 var createComments = function () {
   var comments = [];
   var commentsQuantity = 0;
@@ -53,8 +59,7 @@ var createComments = function () {
   }
   return comments;
 };
-
-// Массив описаний к фото
+// 2.3. Массив описаний к фото
 var descriptionArr = [
   'Тестим новую камеру!',
   'Затусили с друзьями на море',
@@ -63,7 +68,7 @@ var descriptionArr = [
   'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
   'Вот это тачка!'
 ];
-// Создание массива объектов фотографий с полученными ранее свойствами
+// 2.4. Создание массива объектов фотографий с полученными ранее свойствами
 var photos = [];
 var createPhotos = function () {
   for (var i = 0; i < 25; i++) {
@@ -78,8 +83,9 @@ var createPhotos = function () {
 };
 
 createPhotos();
-console.log(photos);
-// Копирование шаблона маленькой фотографии и создание DOM-элементов
+/* -------------------------- */
+// 3. Заполнение страницы маленькими случайными фотографиями
+// 3.1. Копирование шаблона маленькой фотографии и изменение ее свойств
 var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 var pictureDestination = document.querySelector('.pictures');
 
@@ -90,8 +96,7 @@ var createDomElements = function (arr) {
   pictureItem.querySelector('.picture__comments').textContent = arr.comments.length;
   return pictureItem;
 };
-
-// Добавление созданных DOM-элементов маленьких фото в разметку
+// 3.2. Добавление созданных DOM-элементов маленьких фото в разметку
 var addElements = function (elements, destination) {
   var fragment = document.createDocumentFragment();
   for (var j = 0; j < elements.length; j++) {
@@ -100,66 +105,38 @@ var addElements = function (elements, destination) {
   destination.appendChild(fragment);
 };
 addElements(photos, pictureDestination);
-
-// Редактирование шаблона большой фотографии
+/* -------------------------- */
+// 4. Редактирование шаблона большой фотографии
+// 4.1. Добавление URL, likes, описания, comments.length в разметку большой фотографии
 var bigPicture = document.querySelector('.big-picture');
-var bigPictureArr = document.querySelectorAll('.picture');
-// URL, likes, описание, кол-во комментов
+
 var getBigPictureProperties = function (j) {
   bigPicture.querySelector('.big-picture__img').querySelector('img').src = photos[j].url;
   bigPicture.querySelector('.likes-count').textContent = photos[j].likes;
   bigPicture.querySelector('.social__caption').textContent = photos[j].description;
   bigPicture.querySelector('.comments-count').textContent = photos[j].comments.length;
 };
-// Комментарии
+// 4.2.1. Создание DOM-элементов для комментариев
 var bigPictureComments = bigPicture.querySelector('.social__comments');
 var bigPictureComment = bigPictureComments.querySelector('.social__comment');
 
 var getBigPictureComments = function (arr) {
   var photosComment = bigPictureComment.cloneNode(true);
   photosComment.querySelector('.social__picture').src = 'img/avatar-' + getRandomArbitary(1, 6) + '.svg';
-  photosComment.querySelector('.social__text').textContent = arr.comments;
+  photosComment.querySelector('.social__text').textContent = arr;
   return photosComment;
 };
-
+// 4.2.2. Добавление DOM-элементов в разметку
 var addComments = function (j) {
-  deleteComments(bigPictureComments);
+  deleteNodeElements(bigPictureComments);
   var fragment = document.createDocumentFragment();
-    for (var k = 0; k < photos[j].comments.length; k++) {
-      fragment.appendChild(getBigPictureComments(photos[j].comments[k]));
-    }
+  for (var k = 0; k < photos[j].comments.length; k++) {
+    fragment.appendChild(getBigPictureComments(photos[j].comments[k]));
+  }
   bigPictureComments.appendChild(fragment);
 };
-
-var deleteComments = function (parent) {
-  while (parent.hasChildNodes()) {
-    parent.removeChild(parent.lastChild);
-  }
-};
-/*
-var getBigPictureComments = function () {
-  var bigPictureComments = bigPicture.querySelector('.social__comments');
-  var bigPictureComment = bigPictureComments.querySelectorAll('.social__comment');
-  for (var i = 0; i < bigPictureComments.length; i++) {
-    bigPictureComment[i].querySelector('.social__picture').src = 'img/avatar-' + getRandomArbitary(1, 6) + '.svg';
-    bigPictureComment[i].querySelector('.social__text').textContent = photos[i].comments[i];
-  }
-};
-getBigPictureComments();
-*/
-/*
-Список комментариев под фотографией: коментарии должны вставляться в блок .social__comments. Разметка каждого комментария должна выглядеть так:
-<li class="social__comment">
-  <img class="social__picture" src="img/avatar-
-    {{случайное число от 1 до 6}}.svg"
-    alt="Аватар комментатора фотографии"
-    width="35" height="35">
-    <p class="social__text">{{текст комментария}}</p>
-</li>
-*/
-
-// Показ разных больших фотографий при нажатии на маленькие
-
+// 4.3. Показ разных больших фотографий при нажатии на маленькие
+var bigPictureArr = document.querySelectorAll('.picture');
 var viewBigPhoto = function () {
   for (var i = 0; i < bigPictureArr.length; i++) {
     bigPictureArr[i].addEventListener('click', function (evt) {
@@ -175,24 +152,23 @@ var viewBigPhoto = function () {
 }
 
 viewBigPhoto();
-
-// Закрытие большой фотографии
+// 4.4. Закрытие большой фотографии
 var ESC_KEYDOWN = 27;
 var ENTER_KEYDOWN = 13;
 
 var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
 bigPictureCancel.addEventListener('click', function () {
   bigPicture.classList.add('hidden');
-  deleteComments(bigPictureComments);
+  deleteNodeElements(bigPictureComments);
 });
 
 document.addEventListener('keydown', function (evt) {
   if (evt.keyCode === ESC_KEYDOWN) {
     bigPicture.classList.add('hidden');
-    deleteComments(bigPictureComments);
+    deleteNodeElements(bigPictureComments);
   }
 });
-
+/* -------------------------- */
 // Задача 1.5
 document.querySelector('.social__comment-count').classList.add('visually-hidden');
 document.querySelector('.comments-loader').classList.add('visually-hidden');
