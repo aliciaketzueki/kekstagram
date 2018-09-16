@@ -191,7 +191,7 @@ imgUploadCancel.addEventListener('click', function () {
   imgUpload.classList.add('hidden');
   document.removeEventListener('keydown', onImgUploadEscPress);
 });
-// 6. Применение эффекта для изображения
+// 6. Применение эффектов для изображения
 // 6.1. Переключение радиокнопок с эффектами
 var changeEffects = function () {
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
@@ -199,18 +199,22 @@ var changeEffects = function () {
 
   var effectsArr = ['effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat'];
   
+  var onEffectsRadioButtonPress = function (evt) {
+    imgUploadPreview.removeAttribute('class');
+    for (var j = 0; j < effectsArr.length; j++) {
+      if (effectsRadioButton[j] === evt.target)
+        imgUploadPreview.classList.add(effectsArr[j]);
+    }
+  };
+
   for (var i = 0; i < effectsRadioButton.length; i++) {
-    effectsRadioButton[i].addEventListener('click', function (evt) {
-      imgUploadPreview.removeAttribute('class');
-      for (var j = 0; j < effectsArr.length; j++) {
-        if (effectsRadioButton[j] === evt.target)
-          imgUploadPreview.classList.add(effectsArr[j]);
-      }
-    });
+    effectsRadioButton[i].addEventListener('click', onEffectsRadioButtonPress);
+    effectsRadioButton[i].addEventListener('keydown', onEffectsRadioButtonPress);
   }
 };
 
 changeEffects();
+// 6.2. Изменение уровня насыщенности
 /*
 var effectLevelPin = imgUpload.querySelector('.effect-level__pin');
 var scaleControlValue = imgUpload.querySelector('.effect-level__value');
