@@ -152,15 +152,14 @@ var viewBigPhoto = function () {
   for (var i = 0; i < bigPictureArr.length; i++) {
     bigPictureArr[i].addEventListener('click', onLittlePicturePress);
   }
-  
+
   bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
   bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
-}
+};
 
 viewBigPhoto();
 // 4.4. Закрытие большой фотографии
 var ESC_KEYDOWN = 27;
-var ENTER_KEYDOWN = 13;
 
 var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
 bigPictureCancel.addEventListener('click', function () {
@@ -196,7 +195,7 @@ imgUploadCancel.addEventListener('click', function () {
   document.removeEventListener('keydown', onImgUploadEscPress);
 });
 // 6. Применение эффектов для изображения
-/* 
+/*
 1. Для эффекта «Хром» — filter: grayscale(0..1)
 filterLevel / 100
 2. Для эффекта «Сепия» — filter: sepia(0..1)
@@ -214,27 +213,27 @@ var effectsArr = [
     name: 'none',
     className: 'effects__preview--none',
     filter: 'filter: none;'
-  }, 
+  },
   {
     name: 'chrome',
     className: 'effects__preview--chrome',
     filter: 'filter: grayscale(' + (filterLevel / 100) + ');'
-  }, 
+  },
   {
     name: 'sepia',
     className: 'effects__preview--sepia',
     filter: 'filter: sepia(' + (filterLevel / 100) + ');'
-  }, 
+  },
   {
     name: 'marvin',
     className: 'effects__preview--marvin',
     filter: 'filter: invert(' + filterLevel + '%);'
-  }, 
+  },
   {
     name: 'phobos',
     className: 'effects__preview--phobos',
     filter: 'filter: blur(' + (filterLevel * 3 / 100) + 'px);'
-  }, 
+  },
   {
     name: 'heat',
     className: 'effects__preview--heat',
@@ -263,8 +262,6 @@ var changeEffects = function () {
 changeEffects();
 // 6.3. Изменение уровня насыщенности
 var effectLevelPin = imgUpload.querySelector('.effect-level__pin');
-var effectLevel = imgUpload.querySelector('.effect-level');
-var scaleControlValue = imgUpload.querySelector('.effect-level__value');
 var FILTER_LINE_WIDTH = 495 - 20 - 20;
 
 var filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
@@ -274,8 +271,6 @@ effectLevelPin.addEventListener('mouseup', function () {
     imgUploadPreview.style.filter = effectsArr[i].filter;
   }
 });
-
-console.log(filterLevel);
 
 /*
 Алгоритм расчета:
