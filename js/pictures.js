@@ -138,17 +138,21 @@ var addComments = function (j) {
 // 4.3. Показ разных больших фотографий при нажатии на маленькие
 var viewBigPhoto = function () {
   var bigPictureArr = document.querySelectorAll('.picture');
-  for (var i = 0; i < bigPictureArr.length; i++) {
-    bigPictureArr[i].addEventListener('click', function (evt) {
-      for (var j = 0; j < photos.length; j++) {
-        if (bigPictureArr[j].querySelector('img') === evt.target) {
-          getBigPictureProperties(j);
-          addComments(j);
-        }
+
+  var onLittlePicturePress = function (evt) {
+    for (var j = 0; j < photos.length; j++) {
+      if (bigPictureArr[j].querySelector('img') === evt.target) {
+        getBigPictureProperties(j);
+        addComments(j);
       }
-      bigPicture.classList.remove('hidden');
-    });
+    }
+    bigPicture.classList.remove('hidden');
+  };
+
+  for (var i = 0; i < bigPictureArr.length; i++) {
+    bigPictureArr[i].addEventListener('click', onLittlePicturePress);
   }
+  
   bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
   bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
 }
@@ -192,18 +196,61 @@ imgUploadCancel.addEventListener('click', function () {
   document.removeEventListener('keydown', onImgUploadEscPress);
 });
 // 6. Применение эффектов для изображения
-// 6.1. Переключение радиокнопок с эффектами
-var changeEffects = function () {
-  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
-  var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
+/* 
+1. Для эффекта «Хром» — filter: grayscale(0..1)
+filterLevel / 100
+2. Для эффекта «Сепия» — filter: sepia(0..1)
+filterLevel / 100
+3. Для эффекта «Марвин» — filter: invert(0..100%)
+filterLevel + '%'
+4. Для эффекта «Фобос» — filter: blur(0..3px)
+(filterLevel * 3 / 100) + 'px'
+5. Для эффекта «Зной» — filter: brightness(1..3)
+(filterLevel * 3) / 100
+*/
+// 6.1. Массив эффектов
+var effectsArr = [
+  {
+    name: 'none',
+    className: 'effects__preview--none',
+    filter: 'filter: none;'
+  }, 
+  {
+    name: 'chrome',
+    className: 'effects__preview--chrome',
+    filter: 'filter: grayscale(' + (filterLevel / 100) + ');'
+  }, 
+  {
+    name: 'sepia',
+    className: 'effects__preview--sepia',
+    filter: 'filter: sepia(' + (filterLevel / 100) + ');'
+  }, 
+  {
+    name: 'marvin',
+    className: 'effects__preview--marvin',
+    filter: 'filter: invert(' + filterLevel + '%);'
+  }, 
+  {
+    name: 'phobos',
+    className: 'effects__preview--phobos',
+    filter: 'filter: blur(' + (filterLevel * 3 / 100) + 'px);'
+  }, 
+  {
+    name: 'heat',
+    className: 'effects__preview--heat',
+    filter: 'filter: brightness(' + (filterLevel * 3 / 100) + ');'
+  }];
+// 6.2. Переключение радиокнопок с эффектами
+var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
 
-  var effectsArr = ['effects__preview--none', 'effects__preview--chrome', 'effects__preview--sepia', 'effects__preview--marvin', 'effects__preview--phobos', 'effects__preview--heat'];
-  
+var changeEffects = function () {
+  var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
   var onEffectsRadioButtonPress = function (evt) {
     imgUploadPreview.removeAttribute('class');
     for (var j = 0; j < effectsArr.length; j++) {
-      if (effectsRadioButton[j] === evt.target)
-        imgUploadPreview.classList.add(effectsArr[j]);
+      if (effectsRadioButton[j] === evt.target) {
+        imgUploadPreview.classList.add(effectsArr[j].className);
+      }
     }
   };
 
@@ -214,20 +261,30 @@ var changeEffects = function () {
 };
 
 changeEffects();
-// 6.2. Изменение уровня насыщенности
-/*
+// 6.3. Изменение уровня насыщенности
 var effectLevelPin = imgUpload.querySelector('.effect-level__pin');
+var effectLevel = imgUpload.querySelector('.effect-level');
 var scaleControlValue = imgUpload.querySelector('.effect-level__value');
+var FILTER_LINE_WIDTH = 495 - 20 - 20;
 
-
+var filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
 
 effectLevelPin.addEventListener('mouseup', function () {
-  effectLevelPin.style.left = scaleControlValue.value;
+  for (var i = 0; i < effectsArr.length; i++) {
+    imgUploadPreview.style.filter = effectsArr[i].filter;
+  }
 });
-*/
+
+console.log(filterLevel);
+
 /*
+Алгоритм расчета:
+1. х = положение пина разделить на общую длину
+2. Пропорция:
+общая длина - 100% FilterLevel
+    х ------- ?
+
+Изменяются стили imgUploadPreview.style.filter
+
 Добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
 */
-
-// Задача 2.3
-
