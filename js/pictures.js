@@ -49,37 +49,32 @@ var deleteNodeElements = function (parent) {
 var init = function () {
   var pictureIndex = createArr(1, 26);
   var photos = [];
+  createPhotos(pictureIndex, photos);
 
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
   var pictureDestination = document.querySelector('.pictures');
+  addElements(photos, pictureDestination, pictureTemplate);
 
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureComments = bigPicture.querySelector('.social__comments');
   var bigPictureComment = bigPictureComments.querySelector('.social__comment');
+  openBigPhoto(bigPicture, photos, bigPictureComments, bigPictureComment);
+  closeBigPhoto(bigPicture, bigPictureComments);
 
   var uploadFile = document.getElementById('upload-file');
   var imgUpload = document.querySelector('.img-upload__overlay');
   var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
+  openUploadFileOverlay(imgUpload, uploadFile);
+  closeUploadFileOverlay(imgUpload, imgUploadCancel);
 
   var effectsArr = [];
+  createEffectsArr(effectsArr);
 
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
-
-  window.pictureIndex = pictureIndex;
-  window.photos = photos;
-  window.pictureTemplate = pictureTemplate;
-  window.pictureDestination = pictureDestination;
-  window.bigPicture = bigPicture;
-  window.bigPictureComments = bigPictureComments;
-  window.bigPictureComment = bigPictureComment;
-
-  window.uploadFile = uploadFile;
-  window.imgUpload = imgUpload;
-  window.imgUploadCancel = imgUploadCancel;
-  window.effectsArr = effectsArr;
-  window.imgUploadPreview = imgUploadPreview;
+  changeEffects(imgUpload, imgUploadPreview, effectsArr);
+  changeFilterLevel(imgUpload, imgUploadPreview, effectsArr);
 };
-init();
+
 /* -------------------------- */
 // 2. Создание массива фотографий
 // 2.1. Генерация случайного URL у фотографий
@@ -89,7 +84,7 @@ var renderPictureIndex = function (arr) {
   arr.splice(rand, 1);
   return randomElement;
 };
-// 2.2.1. Cоздание случайного количества комментариев к фото
+// 2.2. Cоздание случайного количества комментариев к фото
 var createComments = function () {
   var comments = [];
   var commentsQuantity = 0;
@@ -103,127 +98,135 @@ var createComments = function () {
   return comments;
 };
 // 2.3. Создание массива объектов фотографий с полученными ранее свойствами
-var createPhotos = function () {
+var createPhotos = function (element, arr) {
   for (var i = 0; i < 25; i++) {
     var photo = {
-      url: 'photos/' + renderPictureIndex(pictureIndex) + '.jpg',
+      url: 'photos/' + renderPictureIndex(element) + '.jpg',
       likes: getRandomArbitary(15, 200),
       comments: createComments(),
       description: selectRandomElement(DESCRIPTION_ARR)
     };
-    photos[i] = photo;
+    arr[i] = photo;
   }
+  return arr;
 };
 
-createPhotos();
 /* -------------------------- */
 // 3. Заполнение страницы маленькими случайными фотографиями
 // 3.1. Копирование шаблона маленькой фотографии и изменение ее свойств
-var createDomElements = function (arr) {
-  var pictureItem = pictureTemplate.cloneNode(true);
+var createDomElements = function (arr, template) {
+  var pictureItem = template.cloneNode(true);
   pictureItem.querySelector('.picture__img').src = arr.url;
   pictureItem.querySelector('.picture__likes').textContent = arr.likes;
   pictureItem.querySelector('.picture__comments').textContent = arr.comments.length;
   return pictureItem;
 };
 // 3.2. Добавление созданных DOM-элементов маленьких фото в разметку
-var addElements = function (elements, destination) {
+var addElements = function (elements, destination, template) {
   var fragment = document.createDocumentFragment();
   for (var j = 0; j < elements.length; j++) {
-    fragment.appendChild(createDomElements(elements[j]));
+    fragment.appendChild(createDomElements(elements[j], template));
   }
   destination.appendChild(fragment);
 };
 
-addElements(photos, pictureDestination);
-
 /* -------------------------- */
 // 4. Редактирование шаблона большой фотографии
 // 4.1. Добавление URL, likes, описания, comments.length в разметку большой фотографии
-var getBigPictureProperties = function (j) {
-  bigPicture.querySelector('.big-picture__img').querySelector('img').src = photos[j].url;
-  bigPicture.querySelector('.likes-count').textContent = photos[j].likes;
-  bigPicture.querySelector('.social__caption').textContent = photos[j].description;
-  bigPicture.querySelector('.comments-count').textContent = photos[j].comments.length;
+var getBigPictureProperties = function (j, element, arr) {
+  element.querySelector('.big-picture__img').querySelector('img').src = arr[j].url;
+  element.querySelector('.likes-count').textContent = arr[j].likes;
+  element.querySelector('.social__caption').textContent = arr[j].description;
+  element.querySelector('.comments-count').textContent = arr[j].comments.length;
 };
 // 4.2. Создание DOM-элементов для комментариев
-var getBigPictureComments = function (arr) {
-  var photosComment = bigPictureComment.cloneNode(true);
+var getBigPictureComments = function (arrComments, li) {
+  var photosComment = li.cloneNode(true);
   photosComment.querySelector('.social__picture').src = 'img/avatar-' + getRandomArbitary(1, 6) + '.svg';
-  photosComment.querySelector('.social__text').textContent = arr;
+  photosComment.querySelector('.social__text').textContent = arrComments;
   return photosComment;
 };
-// 4.2.1. Добавление DOM-элементов в разметку
-var addComments = function (j) {
-  deleteNodeElements(bigPictureComments);
+// 4.3. Добавление DOM-элементов в разметку
+var addComments = function (j, arr, ul, li) {
+  deleteNodeElements(ul);
   var fragment = document.createDocumentFragment();
-  for (var k = 0; k < photos[j].comments.length; k++) {
-    fragment.appendChild(getBigPictureComments(photos[j].comments[k]));
+  for (var k = 0; k < arr[j].comments.length; k++) {
+    fragment.appendChild(getBigPictureComments(arr[j].comments[k], li));
   }
-  bigPictureComments.appendChild(fragment);
+  ul.appendChild(fragment);
 };
-// 4.3. Показ разных больших фотографий при нажатии на маленькие
-var openBigPhoto = function () {
+// 4.4. Показ разных больших фотографий при нажатии на маленькие
+/*
+element = bigPicture
+arr = photos
+arrComments = photos[j].comments[k]
+ul = bigPictureComments
+li = bigPictureComment
+
+*/
+var openBigPhoto = function (element, arr, ul, li) {
   var bigPictureArr = document.querySelectorAll('.picture');
   var onLittlePicturePress = function (evt) {
-    for (var j = 0; j < photos.length; j++) {
+    for (var j = 0; j < arr.length; j++) {
       if (bigPictureArr[j].querySelector('img') === evt.target) {
-        getBigPictureProperties(j);
-        addComments(j);
+        getBigPictureProperties(j, element, arr);
+        addComments(j, arr, ul, li);
       }
     }
-    bigPicture.classList.remove('hidden');
+    element.classList.remove('hidden');
   };
 
   for (var i = 0; i < bigPictureArr.length; i++) {
     bigPictureArr[i].addEventListener('click', onLittlePicturePress);
   }
 
-  bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
-  bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
+  element.querySelector('.social__comment-count').classList.add('visually-hidden');
+  element.querySelector('.comments-loader').classList.add('visually-hidden');
 };
-openBigPhoto();
-// 4.4. Закрытие большой фотографии
-var closeBigPhoto = function () {
-  var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
+
+// 4.5. Закрытие большой фотографии
+var closeBigPhoto = function (element, ul) {
+  var bigPictureCancel = element.querySelector('.big-picture__cancel');
 
   bigPictureCancel.addEventListener('click', function () {
-    bigPicture.classList.add('hidden');
-    deleteNodeElements(bigPictureComments);
+    element.classList.add('hidden');
+    deleteNodeElements(ul);
   });
 
   document.addEventListener('keydown', function (evt) {
     if (evt.keyCode === ESC_KEYDOWN) {
-      bigPicture.classList.add('hidden');
-      deleteNodeElements(bigPictureComments);
+      element.classList.add('hidden');
+      deleteNodeElements(ul);
     }
   });
-}
- closeBigPhoto();
+};
+
 /* -------------------------- */
 // 5. Загрузка изображения и показ формы редактирования
-// 5.1. Функция нажатия на ESC
-var onImgUploadEscPress = function (evt) {
-  if (evt.keyCode === ESC_KEYDOWN) {
-    imgUpload.classList.add('hidden');
-  }
-};
-// 5.2. Показ формы редактирования
-var openUploadFileOverlay = function () {
-  uploadFile.addEventListener('change', function () {
-    imgUpload.classList.remove('hidden');
-    document.addEventListener('keydown', onImgUploadEscPress);
+// 5.1. Показ формы редактирования
+var openUploadFileOverlay = function (element, button) {
+  button.addEventListener('change', function () {
+    element.classList.remove('hidden');
+    
+    document.addEventListener('keydown', function (evt) {
+      if (evt.keyCode === ESC_KEYDOWN) {
+        element.classList.add('hidden');
+      }
+    });
   });
 };
-openUploadFileOverlay();
-// 5.3. Закрытие формы редактирования
-var closeUploadFileOverlay = function () {
-  imgUploadCancel.addEventListener('click', function () {
-    imgUpload.classList.add('hidden');
-    document.removeEventListener('keydown', onImgUploadEscPress);
+
+// 5.2. Закрытие формы редактирования
+var closeUploadFileOverlay = function (element, button) {
+  button.addEventListener('click', function () {
+    element.classList.add('hidden');
+    document.removeEventListener('keydown', function (evt) {
+      if (evt.keyCode === ESC_KEYDOWN) {
+        element.classList.add('hidden');
+      }
+    });
   });
 };
-closeUploadFileOverlay();
 // 6. Применение эффектов для изображения
 /*
 1. Для эффекта «Хром» — filter: grayscale(0..1)
@@ -244,7 +247,7 @@ var Effects = function (name, className, filter) {
   this.filter = filter;
 };
 // 6.2. Функция создания массива эффектов
-var createEffectsArr = function () {
+var createEffectsArr = function (arr) {
   var noneEffect = new Effects('none', 'effects__preview--none', 'filter: none');
   var chromeEffect = new Effects('chrome', 'effects__preview--chrome', 'filter: grayscale( + (filterLevel / 100) + );');
   var sepiaEffect = new Effects('sepia', 'effects__preview--sepia', 'filter: sepia( + (filterLevel / 100) + );');
@@ -252,17 +255,17 @@ var createEffectsArr = function () {
   var phobosEffect = new Effects('phobos', 'effects__preview--phobos', 'filter: blur( + (filterLevel * 3 / 100) + px);');
   var heatEffect = new Effects('heat', 'effects__preview--heat', 'filter: brightness( + (filterLevel * 3 / 100) + );');
 
-  effectsArr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
-}
-createEffectsArr();
-// 6.2. Переключение радиокнопок с эффектами
-var changeEffects = function () {
-  var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
+  arr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
+};
+
+// 6.3. Переключение радиокнопок с эффектами
+var changeEffects = function (element, preview, arr) {
+  var effectsRadioButton = element.querySelectorAll('.effects__radio');
   var onEffectsRadioButtonPress = function (evt) {
-    imgUploadPreview.removeAttribute('class');
-    for (var j = 0; j < effectsArr.length; j++) {
+    preview.removeAttribute('class');
+    for (var j = 0; j < arr.length; j++) {
       if (effectsRadioButton[j] === evt.target) {
-        imgUploadPreview.classList.add(effectsArr[j].className);
+        preview.classList.add(arr[j].className);
       }
     }
   };
@@ -272,20 +275,20 @@ var changeEffects = function () {
     effectsRadioButton[i].addEventListener('keydown', onEffectsRadioButtonPress);
   }
 };
-changeEffects();
-// 6.3. Изменение уровня насыщенности
-var changeFilterLevel = function () {
-  var effectLevelPin = imgUpload.querySelector('.effect-level__pin');
+
+// 6.4. Изменение уровня насыщенности
+var changeFilterLevel = function (element, preview, arr) {
+  var effectLevelPin = element.querySelector('.effect-level__pin');
 
   var filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
 
   effectLevelPin.addEventListener('mouseup', function () {
-    for (var i = 0; i < effectsArr.length; i++) {
-      imgUploadPreview.style.filter = effectsArr[i].filter;
+    for (var i = 0; i < arr.length; i++) {
+      preview.style.filter = arr[i].filter;
     }
   });
 };
-changeFilterLevel();
+
 /*
 Алгоритм расчета:
 1. х = положение пина разделить на общую длину
@@ -297,3 +300,4 @@ changeFilterLevel();
 
 Добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
 */
+init();
