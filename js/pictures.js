@@ -18,7 +18,6 @@ var COMMENTS_ARR = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
-var FILTER_LINE_WIDTH = 495 - 20 - 20;
 // 1.2. Выбор случайного числа
 var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -162,7 +161,6 @@ arr = photos
 arrComments = photos[j].comments[k]
 ul = bigPictureComments
 li = bigPictureComment
-
 */
 var openBigPhoto = function (element, arr, ul, li) {
   var bigPictureArr = document.querySelectorAll('.picture');
@@ -183,7 +181,6 @@ var openBigPhoto = function (element, arr, ul, li) {
   element.querySelector('.social__comment-count').classList.add('visually-hidden');
   element.querySelector('.comments-loader').classList.add('visually-hidden');
 };
-
 // 4.5. Закрытие большой фотографии
 var closeBigPhoto = function (element, ul) {
   var bigPictureCancel = element.querySelector('.big-picture__cancel');
@@ -207,7 +204,7 @@ var closeBigPhoto = function (element, ul) {
 var openUploadFileOverlay = function (element, button) {
   button.addEventListener('change', function () {
     element.classList.remove('hidden');
-    
+
     document.addEventListener('keydown', function (evt) {
       if (evt.keyCode === ESC_KEYDOWN) {
         element.classList.add('hidden');
@@ -215,7 +212,6 @@ var openUploadFileOverlay = function (element, button) {
     });
   });
 };
-
 // 5.2. Закрытие формы редактирования
 var closeUploadFileOverlay = function (element, button) {
   button.addEventListener('click', function () {
@@ -257,7 +253,6 @@ var createEffectsArr = function (arr) {
 
   arr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
 };
-
 // 6.3. Переключение радиокнопок с эффектами
 var changeEffects = function (element, preview, arr) {
   var effectsRadioButton = element.querySelectorAll('.effects__radio');
@@ -275,12 +270,9 @@ var changeEffects = function (element, preview, arr) {
     effectsRadioButton[i].addEventListener('keydown', onEffectsRadioButtonPress);
   }
 };
-
 // 6.4. Изменение уровня насыщенности
 var changeFilterLevel = function (element, preview, arr) {
   var effectLevelPin = element.querySelector('.effect-level__pin');
-
-  var filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
 
   effectLevelPin.addEventListener('mouseup', function () {
     for (var i = 0; i < arr.length; i++) {
@@ -296,6 +288,8 @@ var changeFilterLevel = function (element, preview, arr) {
 общая длина - 100% FilterLevel
     х ------- ?
 
+  filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
+  FILTER_LINE_WIDTH = 495 - 20 - 20;
 Изменяются стили imgUploadPreview.style.filter
 
 Добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
