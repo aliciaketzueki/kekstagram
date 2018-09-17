@@ -1,10 +1,29 @@
 'use strict';
-// 1. Абстрактные (общие) функции
-// 1.1. Выбор случайного числа
+// 1. Общие функции и константы
+// 1.1. Константы
+var ESC_KEYDOWN = 27;
+var DESCRIPTION_ARR = [
+  'Тестим новую камеру!',
+  'Затусили с друзьями на море',
+  'Как же круто тут кормят',
+  'Отдыхаем...',
+  'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
+  'Вот это тачка!'
+];
+var COMMENTS_ARR = [
+  'Всё отлично!',
+  'В целом всё неплохо. Но не всё.',
+  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
+  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
+  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
+  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
+];
+var FILTER_LINE_WIDTH = 495 - 20 - 20;
+// 1.2. Выбор случайного числа
 var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
-// 1.2. Создание массива чисел
+// 1.3. Создание массива чисел
 var createArr = function (arrStart, arrLength) {
   var arr = [];
   for (var i = arrStart; i < arrLength; i++) {
@@ -12,7 +31,7 @@ var createArr = function (arrStart, arrLength) {
   }
   return arr;
 };
-// 1.3. Выбор рандомного элемента из массива
+// 1.4. Выбор рандомного элемента из массива
 var selectRandomElement = function (arr) {
   var element;
   for (var i = 0; i < arr.length; i++) {
@@ -20,11 +39,15 @@ var selectRandomElement = function (arr) {
   }
   return element;
 };
-// 1.4. Удаление Node-элементов
+// 1.5. Удаление Node-элементов
 var deleteNodeElements = function (parent) {
   while (parent.hasChildNodes()) {
     parent.removeChild(parent.lastChild);
   }
+};
+// 1.6. Функция инициализации
+var init = function () {
+
 };
 /* -------------------------- */
 // 2. Создание массива фотографий
@@ -36,15 +59,7 @@ var renderPictureIndex = function (arr) {
   arr.splice(rand, 1);
   return randomElement;
 };
-// 2.2. Массив комментарий
-var commentsArr = [
-  'Всё отлично!',
-  'В целом всё неплохо. Но не всё.',
-  'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце концов это просто непрофессионально.',
-  'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.',
-  'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
-  'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
-];
+
 // 2.2.1. Cоздание случайного количества комментариев к фото
 var createComments = function () {
   var comments = [];
@@ -52,22 +67,13 @@ var createComments = function () {
   for (var j = 0; j < 25; j++) {
     commentsQuantity = getRandomArbitary(0, 25);
     for (var i = 0; i < commentsQuantity; i++) {
-      comments[i] = selectRandomElement(commentsArr);
+      comments[i] = selectRandomElement(COMMENTS_ARR);
       comments.length = commentsQuantity;
     }
   }
   return comments;
 };
-// 2.3. Массив описаний к фото
-var descriptionArr = [
-  'Тестим новую камеру!',
-  'Затусили с друзьями на море',
-  'Как же круто тут кормят',
-  'Отдыхаем...',
-  'Цените каждое мгновенье. Цените тех, кто рядом с вами и отгоняйте все сомненья. Не обижайте всех словами......',
-  'Вот это тачка!'
-];
-// 2.4. Создание массива объектов фотографий с полученными ранее свойствами
+// 2.3. Создание массива объектов фотографий с полученными ранее свойствами
 var photos = [];
 var createPhotos = function () {
   for (var i = 0; i < 25; i++) {
@@ -75,7 +81,7 @@ var createPhotos = function () {
       url: 'photos/' + renderPictureIndex(pictureIndex) + '.jpg',
       likes: getRandomArbitary(15, 200),
       comments: createComments(),
-      description: selectRandomElement(descriptionArr)
+      description: selectRandomElement(DESCRIPTION_ARR)
     };
     photos[i] = photo;
   }
@@ -105,6 +111,7 @@ var addElements = function (elements, destination) {
 };
 
 addElements(photos, pictureDestination);
+
 /* -------------------------- */
 // 4. Редактирование шаблона большой фотографии
 // 4.1. Добавление URL, likes, описания, comments.length в разметку большой фотографии
@@ -159,8 +166,6 @@ var viewBigPhoto = function () {
 
 viewBigPhoto();
 // 4.4. Закрытие большой фотографии
-var ESC_KEYDOWN = 27;
-
 var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
 bigPictureCancel.addEventListener('click', function () {
   bigPicture.classList.add('hidden');
@@ -207,38 +212,27 @@ filterLevel + '%'
 5. Для эффекта «Зной» — filter: brightness(1..3)
 (filterLevel * 3) / 100
 */
-// 6.1. Массив эффектов
-var effectsArr = [
-  {
-    name: 'none',
-    className: 'effects__preview--none',
-    filter: 'filter: none;'
-  },
-  {
-    name: 'chrome',
-    className: 'effects__preview--chrome',
-    filter: 'filter: grayscale(' + (filterLevel / 100) + ');'
-  },
-  {
-    name: 'sepia',
-    className: 'effects__preview--sepia',
-    filter: 'filter: sepia(' + (filterLevel / 100) + ');'
-  },
-  {
-    name: 'marvin',
-    className: 'effects__preview--marvin',
-    filter: 'filter: invert(' + filterLevel + '%);'
-  },
-  {
-    name: 'phobos',
-    className: 'effects__preview--phobos',
-    filter: 'filter: blur(' + (filterLevel * 3 / 100) + 'px);'
-  },
-  {
-    name: 'heat',
-    className: 'effects__preview--heat',
-    filter: 'filter: brightness(' + (filterLevel * 3 / 100) + ');'
-  }];
+// 6.1. Функция-конструктор для создания объекта эффекта
+var Effects = function (name, className, filter) {
+  this.name = name;
+  this.className = className;
+  this.filter = filter;
+};
+// 6.2. Функция создания массива эффектов
+var effectsArr = [];
+
+var createEffectsArr = function () {
+  var noneEffect = new Effects('none', 'effects__preview--none', 'filter: none');
+  var chromeEffect = new Effects('chrome', 'effects__preview--chrome', 'filter: grayscale( + (filterLevel / 100) + );');
+  var sepiaEffect = new Effects('sepia', 'effects__preview--sepia', 'filter: sepia( + (filterLevel / 100) + );');
+  var marvinEffect = new Effects('marvin', 'effects__preview--marvin', 'filter: invert( + filterLevel + %);');
+  var phobosEffect = new Effects('phobos', 'effects__preview--phobos', 'filter: blur( + (filterLevel * 3 / 100) + px);');
+  var heatEffect = new Effects('heat', 'effects__preview--heat', 'filter: brightness( + (filterLevel * 3 / 100) + );');
+
+  effectsArr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
+}
+
+createEffectsArr();
 // 6.2. Переключение радиокнопок с эффектами
 var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
 
@@ -261,17 +255,18 @@ var changeEffects = function () {
 
 changeEffects();
 // 6.3. Изменение уровня насыщенности
-var effectLevelPin = imgUpload.querySelector('.effect-level__pin');
-var FILTER_LINE_WIDTH = 495 - 20 - 20;
+var changeFilterLevel = function () {
+  var effectLevelPin = imgUpload.querySelector('.effect-level__pin');
 
-var filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
+  var filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
 
-effectLevelPin.addEventListener('mouseup', function () {
-  for (var i = 0; i < effectsArr.length; i++) {
-    imgUploadPreview.style.filter = effectsArr[i].filter;
-  }
-});
-
+  effectLevelPin.addEventListener('mouseup', function () {
+    for (var i = 0; i < effectsArr.length; i++) {
+      imgUploadPreview.style.filter = effectsArr[i].filter;
+    }
+  });
+};
+changeFilterLevel();
 /*
 Алгоритм расчета:
 1. х = положение пина разделить на общую длину
