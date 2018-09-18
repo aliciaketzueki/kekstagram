@@ -227,6 +227,7 @@ var closeUploadFileOverlay = function (element, button) {
     });
   });
 };
+/* -------------------------- */
 // 6. Применение эффектов для изображения
 /*
 1. Для эффекта «Хром» — filter: grayscale(0..1)
@@ -299,7 +300,7 @@ var changeFilterLevel = function (element, preview, arr) {
 Добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
 */
 
-// 7. Изменение размеров изображения
+// 6.5. Изменение размеров изображения
 var changeImgSize = function (area, img) {
   var scaleControlSmaller = area.querySelector('.scale__control--smaller');
   var scaleControlBigger = area.querySelector('.scale__control--bigger');
@@ -327,7 +328,9 @@ var changeImgSize = function (area, img) {
     }
   });
 };
-// 8. Валидация хэштегов
+
+// 7. Валидация
+// 7.1. Валидация хэш-тегов
 var textHashtag = document.querySelector('.text__hashtags');
 
 
@@ -370,23 +373,22 @@ if event.target
 */
 
 
-// 9. Валидация комментария
-var textDescription = document.querySelector('.text__description');
-var validity = textDescription.validity;
-var imgUploadSubmit = document.querySelector('.img-upload__submit');
-console.log(validity.rangeOverflow);
+// 7.2. Валидация комментария
 
-textDescription.addEventListener('invalid', function (evt) {
-  if (validity.rangeOverflow) {
-    textDescription.setCustomValidity('Длина комментария не должна превышать 140 символов');
-  } else {
-    textDescription.setCustomValidity('');
-  }
-});
+var checkValidityText = function () {
+  var textDescription = document.querySelector('.text__description');
 
+  textDescription.addEventListener('input', function (evt) {
+    var target = evt.target;
+    if (target.value.length > 140) {
+      target.setCustomValidity('Длина комментария не должна превышать 140 символов');
+    } else {
+      target.setCustomValidity('');
+    }
+  });
+}
 
-
-
+checkValidityText();
 
 
 
