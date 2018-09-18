@@ -294,4 +294,43 @@ var changeFilterLevel = function (element, preview, arr) {
 
 Добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
 */
+
+// 7. Изменение размеров изображения
+var scaleControlSmaller = document.querySelector('.scale__control--smaller');
+var scaleControlBigger = document.querySelector('.scale__control--bigger');
+var scaleControlValue = document.querySelector('.scale__control--value');
+
+
+// parseInt(scaleControlValue);
+var controlValue;
+scaleControlSmaller.addEventListener('click', function () {
+  controlValue = parseInt(scaleControlValue.value);
+  if (controlValue > 0) {
+    scaleControlValue.value = controlValue - 25 + '%'; 
+  }
+});
+
+  scaleControlBigger.addEventListener('click', function () {
+    controlValue = parseInt(scaleControlValue.value);
+    if (controlValue < 100) {
+      scaleControlValue.value = controlValue + 25 + '%';
+    }
+  });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 init();
