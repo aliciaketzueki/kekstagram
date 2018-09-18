@@ -207,7 +207,10 @@ var openUploadFileOverlay = function (element, button) {
     element.classList.remove('hidden');
 
     document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ESC_KEYDOWN) {
+      var target = evt.target;
+      if (target.classList.contains('text__hashtags') || target.classList.contains('text__description')) {
+        evt.stopPropagation();
+      } else if (evt.keyCode === ESC_KEYDOWN) {
         element.classList.add('hidden');
       }
     });
@@ -297,11 +300,6 @@ var changeFilterLevel = function (element, preview, arr) {
 */
 
 // 7. Изменение размеров изображения
-// 7.1. Нажатие на кнопку изменяет input value
-/*
-imgUpload - area
-imgUploadPreview - img
-*/
 var changeImgSize = function (area, img) {
   var scaleControlSmaller = area.querySelector('.scale__control--smaller');
   var scaleControlBigger = area.querySelector('.scale__control--bigger');
@@ -329,12 +327,62 @@ var changeImgSize = function (area, img) {
     }
   });
 };
+// 8. Валидация хэштегов
+var textHashtag = document.querySelector('.text__hashtags');
+
+
+var validity = textHashtag.validity;
+console.log(validity);
 
 
 
+var checkValidity = function () {
+
+};
+/*
+катя маша саша котя
+Для проверки валидности хэш-тегов, нужно вспомнить работу с массивами. Набор хэш-тегов можно превратить в массив, воспользовавшись методом split, который разбивает строки на массивы. После этого, вы можете написать цикл, который будет ходить по полученному массиву и проверять каждый из хэш-тегов на предмет соответствия ограничениям. Если хотя бы один из тегов не проходит нужных проверок, можно воспользоваться методом setCustomValidity для того, чтобы задать полю правильное сообщение об ошибке.
+
+var hashtag = textHashtag.split(' #');
+
+var names = 'Маша, Петя, Марина, Василий';
+#катя #маша #саша #котя
+var arr = names.split(', ');
+
+for (var i = 0; i < arr.length; i++) {
+  alert( 'Вам сообщение ' + arr[i] );
+}
+
+При решении этой задачи обратите внимание на то, что под длиной хэштега в 20 символов в ТЗ имеется ввиду длина, включающая символ решетки, поскольку решетка является частью тега.
+*/
+
+/*
+хэш-тег начинается с символа # (решётка);
+хеш-тег не может состоять только из одной решётки;
+хэш-теги разделяются пробелами;
+один и тот же хэш-тег не может быть использован дважды;
+нельзя указать больше пяти хэш-тегов;
+максимальная длина одного хэш-тега 20 символов, включая решётку;
+теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом.
+если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.
+
+if event.target
+*/
 
 
+// 9. Валидация комментария
+var textDescription = document.querySelector('.text__description');
+var validity = textDescription.validity;
+var imgUploadSubmit = document.querySelector('.img-upload__submit');
+console.log(validity.rangeOverflow);
 
+textDescription.addEventListener('invalid', function (evt) {
+  if (validity.rangeOverflow) {
+    textDescription.setCustomValidity('Длина комментария не должна превышать 140 символов');
+  } else {
+    textDescription.setCustomValidity('');
+  }
+});
 
 
 
