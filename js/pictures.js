@@ -72,6 +72,7 @@ var init = function () {
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
   changeEffects(imgUpload, imgUploadPreview, effectsArr);
   changeFilterLevel(imgUpload, imgUploadPreview, effectsArr);
+  changeImgSize(imgUpload, imgUploadPreview);
 };
 
 /* -------------------------- */
@@ -296,28 +297,38 @@ var changeFilterLevel = function (element, preview, arr) {
 */
 
 // 7. Изменение размеров изображения
-var scaleControlSmaller = document.querySelector('.scale__control--smaller');
-var scaleControlBigger = document.querySelector('.scale__control--bigger');
-var scaleControlValue = document.querySelector('.scale__control--value');
+// 7.1. Нажатие на кнопку изменяет input value
+/*
+imgUpload - area
+imgUploadPreview - img
+*/
+var changeImgSize = function (area, img) {
+  var scaleControlSmaller = area.querySelector('.scale__control--smaller');
+  var scaleControlBigger = area.querySelector('.scale__control--bigger');
+  var scaleControlValue = area.querySelector('.scale__control--value');
 
+  var controlValue;
+  var x = 1;
+  img.style = 'transform: scale(' + x + ')';
 
-// parseInt(scaleControlValue);
-var controlValue;
-scaleControlSmaller.addEventListener('click', function () {
-  controlValue = parseInt(scaleControlValue.value);
-  if (controlValue > 0) {
-    scaleControlValue.value = controlValue - 25 + '%'; 
-  }
-});
+  scaleControlSmaller.addEventListener('click', function () {
+    controlValue = parseInt(scaleControlValue.value);
+    if (controlValue > 25) {
+      scaleControlValue.value = controlValue - 25 + '%';
+      x -= 0.25;
+      img.style = 'transform: scale(' + x + ');';
+    }
+  });
 
   scaleControlBigger.addEventListener('click', function () {
     controlValue = parseInt(scaleControlValue.value);
     if (controlValue < 100) {
       scaleControlValue.value = controlValue + 25 + '%';
+      x += 0.25;
+      img.style = 'transform: scale(' + x + ');';
     }
   });
-
-
+};
 
 
 
