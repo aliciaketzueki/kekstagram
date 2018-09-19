@@ -44,7 +44,29 @@ var deleteNodeElements = function (parent) {
     parent.removeChild(parent.lastChild);
   }
 };
-// 1.6. Функция инициализации
+// 1.6. Проверка повторения элементов в массиве
+var calcRepeats = function (arr) {
+  var repeat = 0;
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = i + 1; j < arr.length; j++) {
+      if (arr[j] === arr[i]) {
+        repeat++;
+      }
+    }
+  }
+  return repeat;
+};
+//1.7. Поиск символа в строке
+var checkLetters = function (arr, symbol) {
+  var letter = 0;
+  for (var j = 1; j <= arr.length; j++) {
+    if (arr.charAt(j) === symbol) {
+      letter++;
+    }
+  }
+  return letter;
+}
+// 1.8. Функция инициализации
 var init = function () {
   var pictureIndex = createArr(1, 26);
   var photos = [];
@@ -75,6 +97,7 @@ var init = function () {
   changeImgSize(imgUpload, imgUploadPreview);
 
   checkValidityHashtags(imgUpload);
+  checkValidityText(imgUpload);
 };
 
 /* -------------------------- */
@@ -313,7 +336,7 @@ var changeImgSize = function (area, img) {
   img.style = 'transform: scale(' + x + ')';
 
   scaleControlSmaller.addEventListener('click', function () {
-    controlValue = parseInt(scaleControlValue.value);
+    controlValue = parseInt(scaleControlValue.value, 10);
     if (controlValue > 25) {
       scaleControlValue.value = controlValue - 25 + '%';
       x -= 0.25;
@@ -322,7 +345,7 @@ var changeImgSize = function (area, img) {
   });
 
   scaleControlBigger.addEventListener('click', function () {
-    controlValue = parseInt(scaleControlValue.value);
+    controlValue = parseInt(scaleControlValue.value, 10);
     if (controlValue < 100) {
       scaleControlValue.value = controlValue + 25 + '%';
       x += 0.25;
@@ -330,49 +353,40 @@ var changeImgSize = function (area, img) {
     }
   });
 };
-
+/* -------------------------- */
 // 7. Валидация
 // 7.1. Валидация хэш-тегов
 var checkValidityHashtags = function (area) {
   var textHashtag = area.querySelector('.text__hashtags');
 
-  textHashtag.addEventListener('input', function () {
-    var hashtags = textHashtag.value.split(' ');
+  textHashtag.addEventListener('input', function (evt) {
+    var target = evt.target;
+    var hashtags = target.value.toLowerCase().split(' ');
 
     for (var i = 0; i < hashtags.length; i++) {
       var currentHashtag = hashtags[i];
-
-      if (currentHashtag.charAt(0) !== '#') {
-        textHashtag.setCustomValidity('Хэш-теги должны начинаться с символа # и раделяться одним пробелом');
-      } else if (currentHashtag.length < 2) {
-        textHashtag.setCustomValidity('Хэш-тег не может состоять из одной решётки');
-      } else if (currentHashtag.length > 20) {
-        textHashtag.setCustomValidity('Длина хэш-тега не должна быть больше 20 символов');
-      } else if (hashtags.length > 5) {
-        textHashtag.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
-      } else {
-        for (var j = i + 1; j < hashtags.length; j++) {
-          if (hashtags[j].toLowerCase() === currentHashtag.toLowerCase()) {
-            textHashtag.setCustomValidity('Хэш-теги не могут повторяться');
-          } else {
-            textHashtag.setCustomValidity('');
-          }
-        }
-      }
-
-      for (var k = 1; k < currentHashtag.length; k++) {
-        if (currentHashtag.charAt(k) === '#') {
-          textHashtag.setCustomValidity('Хэш-теги должны разделяться пробелом');
-        }
-      }
       
+      if (currentHashtag.charAt(0) !== '#') {
+        target.setCustomValidity('Хэш-теги должны начинаться с символа # и раделяться одним пробелом');
+      } else if (checkLetters(currentHashtag, '#') > 0) {
+        target.setCustomValidity('Хэш-теги должны разделяться пробелом');
+      } else if (currentHashtag.length < 2) {
+        target.setCustomValidity('Хэш-тег не может состоять из одной решётки');
+      } else if (currentHashtag.length > 20) {
+        target.setCustomValidity('Длина хэш-тега не должна быть больше 20 символов');
+      } else if (hashtags.length > 5) {
+        target.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
+      } else if (calcRepeats(hashtags) > 0) {
+        target.setCustomValidity('Хэш-теги не могут повторяться');
+      } else {
+        target.setCustomValidity('');
+      }    
     }
   });
 };
-
 // 7.2. Валидация комментария
-var checkValidityText = function () {
-  var textDescription = document.querySelector('.text__description');
+var checkValidityText = function (area) {
+  var textDescription = area.querySelector('.text__description');
 
   textDescription.addEventListener('input', function (evt) {
     var target = evt.target;
@@ -382,14 +396,6 @@ var checkValidityText = function () {
       target.setCustomValidity('');
     }
   });
-}
-
-checkValidityText();
-
-var checkValidity = function () {
-
 };
-
-
 
 init();
