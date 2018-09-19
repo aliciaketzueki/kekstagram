@@ -18,6 +18,10 @@ var COMMENTS_ARR = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
+var HASHTAG_MAX_LENGTH = 20;
+var HASHTAG_MIN_LENGTH = 2;
+var HASHTAG_AMOUNT = 5;
+var COMMENT_MAX_LENGTH = 140;
 // 1.2. Выбор случайного числа
 var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -367,15 +371,15 @@ var checkValidityHashtags = function (area) {
       var currentHashtag = hashtags[i];
 
       if (currentHashtag.charAt(0) !== '#') {
-        target.setCustomValidity('Хэш-теги должны начинаться с символа # и раделяться одним пробелом');
+        target.setCustomValidity('Хэш-теги должны начинаться с символа #');
       } else if (checkLetters(currentHashtag, '#') > 0) {
         target.setCustomValidity('Хэш-теги должны разделяться пробелом');
-      } else if (currentHashtag.length < 2) {
+      } else if (currentHashtag.length < HASHTAG_MIN_LENGTH) {
         target.setCustomValidity('Хэш-тег не может состоять из одной решётки');
-      } else if (currentHashtag.length > 20) {
-        target.setCustomValidity('Длина хэш-тега не должна быть больше 20 символов');
-      } else if (hashtags.length > 5) {
-        target.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
+      } else if (currentHashtag.length > HASHTAG_MAX_LENGTH) {
+        target.setCustomValidity('Длина хэш-тега не должна быть больше ' + HASHTAG_MAX_LENGTH + ' символов');
+      } else if (hashtags.length > HASHTAG_AMOUNT) {
+        target.setCustomValidity('Нельзя указать больше ' + HASHTAG_AMOUNT + ' хэш-тегов');
       } else if (calcRepeats(hashtags) > 0) {
         target.setCustomValidity('Хэш-теги не могут повторяться');
       } else {
@@ -390,8 +394,8 @@ var checkValidityText = function (area) {
 
   textDescription.addEventListener('input', function (evt) {
     var target = evt.target;
-    if (target.value.length > 140) {
-      target.setCustomValidity('Длина комментария не должна превышать 140 символов');
+    if (target.value.length > COMMENT_MAX_LENGTH) {
+      target.setCustomValidity('Длина комментария не должна превышать ' + COMMENT_MAX_LENGTH + ' символов');
     } else {
       target.setCustomValidity('');
     }
