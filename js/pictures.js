@@ -73,6 +73,8 @@ var init = function () {
   changeEffects(imgUpload, imgUploadPreview, effectsArr);
   changeFilterLevel(imgUpload, imgUploadPreview, effectsArr);
   changeImgSize(imgUpload, imgUploadPreview);
+
+  checkValidityHashtags(imgUpload);
 };
 
 /* -------------------------- */
@@ -331,50 +333,44 @@ var changeImgSize = function (area, img) {
 
 // 7. Валидация
 // 7.1. Валидация хэш-тегов
-var textHashtag = document.querySelector('.text__hashtags');
+var checkValidityHashtags = function (area) {
+  var textHashtag = area.querySelector('.text__hashtags');
 
+  textHashtag.addEventListener('input', function () {
+    var hashtags = textHashtag.value.split(' ');
 
-var validity = textHashtag.validity;
-console.log(validity);
+    for (var i = 0; i < hashtags.length; i++) {
+      var currentHashtag = hashtags[i];
 
+      if (currentHashtag.charAt(0) !== '#') {
+        textHashtag.setCustomValidity('Хэш-теги должны начинаться с символа # и раделяться одним пробелом');
+      } else if (currentHashtag.length < 2) {
+        textHashtag.setCustomValidity('Хэш-тег не может состоять из одной решётки');
+      } else if (currentHashtag.length > 20) {
+        textHashtag.setCustomValidity('Длина хэш-тега не должна быть больше 20 символов');
+      } else if (hashtags.length > 5) {
+        textHashtag.setCustomValidity('Нельзя указать больше пяти хэш-тегов');
+      } else {
+        for (var j = i + 1; j < hashtags.length; j++) {
+          if (hashtags[j].toLowerCase() === currentHashtag.toLowerCase()) {
+            textHashtag.setCustomValidity('Хэш-теги не могут повторяться');
+          } else {
+            textHashtag.setCustomValidity('');
+          }
+        }
+      }
 
-
-var checkValidity = function () {
-
+      for (var k = 1; k < currentHashtag.length; k++) {
+        if (currentHashtag.charAt(k) === '#') {
+          textHashtag.setCustomValidity('Хэш-теги должны разделяться пробелом');
+        }
+      }
+      
+    }
+  });
 };
-/*
-катя маша саша котя
-Для проверки валидности хэш-тегов, нужно вспомнить работу с массивами. Набор хэш-тегов можно превратить в массив, воспользовавшись методом split, который разбивает строки на массивы. После этого, вы можете написать цикл, который будет ходить по полученному массиву и проверять каждый из хэш-тегов на предмет соответствия ограничениям. Если хотя бы один из тегов не проходит нужных проверок, можно воспользоваться методом setCustomValidity для того, чтобы задать полю правильное сообщение об ошибке.
-
-var hashtag = textHashtag.split(' #');
-
-var names = 'Маша, Петя, Марина, Василий';
-#катя #маша #саша #котя
-var arr = names.split(', ');
-
-for (var i = 0; i < arr.length; i++) {
-  alert( 'Вам сообщение ' + arr[i] );
-}
-
-При решении этой задачи обратите внимание на то, что под длиной хэштега в 20 символов в ТЗ имеется ввиду длина, включающая символ решетки, поскольку решетка является частью тега.
-*/
-
-/*
-хэш-тег начинается с символа # (решётка);
-хеш-тег не может состоять только из одной решётки;
-хэш-теги разделяются пробелами;
-один и тот же хэш-тег не может быть использован дважды;
-нельзя указать больше пяти хэш-тегов;
-максимальная длина одного хэш-тега 20 символов, включая решётку;
-теги нечувствительны к регистру: #ХэшТег и #хэштег считаются одним и тем же тегом.
-если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.
-
-if event.target
-*/
-
 
 // 7.2. Валидация комментария
-
 var checkValidityText = function () {
   var textDescription = document.querySelector('.text__description');
 
@@ -390,7 +386,9 @@ var checkValidityText = function () {
 
 checkValidityText();
 
+var checkValidity = function () {
 
+};
 
 
 
