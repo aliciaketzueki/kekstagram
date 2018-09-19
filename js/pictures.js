@@ -56,7 +56,7 @@ var calcRepeats = function (arr) {
   }
   return repeat;
 };
-//1.7. Поиск символа в строке
+// 1.7. Поиск символа в строке
 var checkLetters = function (arr, symbol) {
   var letter = 0;
   for (var j = 1; j <= arr.length; j++) {
@@ -65,7 +65,7 @@ var checkLetters = function (arr, symbol) {
     }
   }
   return letter;
-}
+};
 // 1.8. Функция инициализации
 var init = function () {
   var pictureIndex = createArr(1, 26);
@@ -365,7 +365,7 @@ var checkValidityHashtags = function (area) {
 
     for (var i = 0; i < hashtags.length; i++) {
       var currentHashtag = hashtags[i];
-      
+
       if (currentHashtag.charAt(0) !== '#') {
         target.setCustomValidity('Хэш-теги должны начинаться с символа # и раделяться одним пробелом');
       } else if (checkLetters(currentHashtag, '#') > 0) {
@@ -380,7 +380,7 @@ var checkValidityHashtags = function (area) {
         target.setCustomValidity('Хэш-теги не могут повторяться');
       } else {
         target.setCustomValidity('');
-      }    
+      }
     }
   });
 };
