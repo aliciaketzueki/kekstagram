@@ -98,20 +98,24 @@ var init = function () {
   var bigPictureComment = bigPictureComments.querySelector('.social__comment');
   openBigPhoto(bigPicture, photos, bigPictureComments, bigPictureComment);
   closeBigPhoto(bigPicture, bigPictureComments);
-
+  // Форма редактирования
   var uploadFile = document.getElementById('upload-file');
   var imgUpload = document.querySelector('.img-upload__overlay');
   var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
+  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
+  var scaleControlValue = imgUpload.querySelector('.scale__control--value');
+  var effectsArr = [];
+  var pinHandle = imgUpload.querySelector('.effect-level__pin');
+  var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
+  var imageSizeDefault = IMAGE_SIZE_MAX / PERCENT_MAX;
+
   openUploadFileOverlay(imgUpload, uploadFile);
   closeUploadFileOverlay(imgUpload, imgUploadCancel);
 
-  var effectsArr = [];
   createEffectsArr(effectsArr);
-
-  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
   changeEffects(imgUpload, imgUploadPreview, effectsArr);
   changeFilterLevel(imgUpload, imgUploadPreview, effectsArr);
-  changeImgSize(imgUpload, imgUploadPreview);
+  changeImgSize(imgUpload, imgUploadPreview, scaleControlValue, imageSizeDefault);
 
   checkValidityHashtags(imgUpload);
   checkValidityText(imgUpload);
@@ -343,33 +347,35 @@ var changeFilterLevel = function (element, preview, arr) {
 */
 
 // 6.5. Изменение размеров изображения
-var changeImgSize = function (area, img) {
+var changeImgSize = function (area, img, scale, number) {
   var scaleControlSmaller = area.querySelector('.scale__control--smaller');
   var scaleControlBigger = area.querySelector('.scale__control--bigger');
-  var scaleControlValue = area.querySelector('.scale__control--value');
 
+  scale.value = IMAGE_SIZE_MAX + '%';
   var controlValue;
-  var x = 1;
-  img.style = 'transform: scale(' + x + ')';
 
-  scaleControlSmaller.addEventListener('click', function () {
-    controlValue = parseInt(scaleControlValue.value, 10);
-    if (controlValue > 25) {
-      scaleControlValue.value = controlValue - 25 + '%';
-      x -= 0.25;
-      img.style = 'transform: scale(' + x + ');';
+  var onScaleControlSmallerPress = function () {
+    controlValue = parseInt(scale.value, 10);
+    if (controlValue > IMAGE_SIZE_MIN) {
+      scale.value = controlValue - IMAGE_SIZE_STEP + '%';
+      number -= (IMAGE_SIZE_STEP / PERCENT_MAX);
+      img.style = 'transform: scale(' + number + ');';
     }
-  });
+  };
 
-  scaleControlBigger.addEventListener('click', function () {
-    controlValue = parseInt(scaleControlValue.value, 10);
-    if (controlValue < 100) {
-      scaleControlValue.value = controlValue + 25 + '%';
-      x += 0.25;
-      img.style = 'transform: scale(' + x + ');';
+  var onScaleControlBiggerPress = function () {
+    controlValue = parseInt(scale.value, 10);
+    if (controlValue < IMAGE_SIZE_MAX) {
+      scale.value = controlValue + IMAGE_SIZE_STEP + '%';
+      number += (IMAGE_SIZE_STEP / PERCENT_MAX);
+      img.style = 'transform: scale(' + number + ');';
     }
-  });
+  };
+
+  scaleControlBigger.addEventListener('click', onScaleControlBiggerPress);
+  scaleControlSmaller.addEventListener('click', onScaleControlSmallerPress);
 };
+
 /* -------------------------- */
 // 7. Валидация
 // 7.1. Валидация хэш-тегов
