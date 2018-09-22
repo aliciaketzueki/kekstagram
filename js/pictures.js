@@ -1,6 +1,7 @@
 'use strict';
 // 1. Общие функции и константы
 // 1.1. Константы
+var PERCENT_MAX = 100;
 var ESC_KEYDOWN = 27;
 var DESCRIPTION_ARR = [
   'Тестим новую камеру!',
@@ -18,6 +19,18 @@ var COMMENTS_ARR = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
+var LIKES_AMOUNT_MIN = 15;
+var LIKES_AMOUNT_MAX = 200;
+var FILTER_LINE_WIDTH = 455;
+var EFFECTS_CHROME_MAX = 1;
+var EFFECTS_SEPIA_MAX = 1;
+var EFFECTS_MARVIN_MAX = 100;
+var EFFECTS_PHOBOS_MAX = 3;
+var EFFECTS_HEAT_MAX = 3;
+var EFFECTS_HEAT_MIN = 1;
+var IMAGE_SIZE_MAX = 100;
+var IMAGE_SIZE_MIN = 25;
+var IMAGE_SIZE_STEP = 25;
 var HASHTAG_MAX_LENGTH = 20;
 var HASHTAG_MIN_LENGTH = 2;
 var HASHTAG_AMOUNT = 5;
@@ -131,7 +144,7 @@ var createPhotos = function (element, arr) {
   for (var i = 0; i < 25; i++) {
     var photo = {
       url: 'photos/' + renderPictureIndex(element) + '.jpg',
-      likes: getRandomArbitary(15, 200),
+      likes: getRandomArbitary(LIKES_AMOUNT_MIN, LIKES_AMOUNT_MAX),
       comments: createComments(),
       description: selectRandomElement(DESCRIPTION_ARR)
     };
