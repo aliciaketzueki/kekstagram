@@ -21,13 +21,6 @@ var COMMENTS_ARR = [
 ];
 var LIKES_AMOUNT_MIN = 15;
 var LIKES_AMOUNT_MAX = 200;
-var FILTER_LINE_WIDTH = 455;
-var EFFECTS_CHROME_MAX = 1;
-var EFFECTS_SEPIA_MAX = 1;
-var EFFECTS_MARVIN_MAX = 100;
-var EFFECTS_PHOBOS_MAX = 3;
-var EFFECTS_HEAT_MAX = 3;
-var EFFECTS_HEAT_MIN = 1;
 var IMAGE_SIZE_MAX = 100;
 var IMAGE_SIZE_MIN = 25;
 var IMAGE_SIZE_STEP = 25;
@@ -105,8 +98,7 @@ var init = function () {
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
   var scaleControlValue = imgUpload.querySelector('.scale__control--value');
   var effectsArr = [];
-  var pinHandle = imgUpload.querySelector('.effect-level__pin');
-  var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
+
   var imageSizeDefault = IMAGE_SIZE_MAX / PERCENT_MAX;
 
   openUploadFileOverlay(imgUpload, uploadFile);
@@ -202,13 +194,6 @@ var addComments = function (j, arr, ul, li) {
   ul.appendChild(fragment);
 };
 // 4.4. Показ разных больших фотографий при нажатии на маленькие
-/*
-element = bigPicture
-arr = photos
-arrComments = photos[j].comments[k]
-ul = bigPictureComments
-li = bigPictureComment
-*/
 var openBigPhoto = function (element, arr, ul, li) {
   var bigPictureArr = document.querySelectorAll('.picture');
   var onLittlePicturePress = function (evt) {
@@ -274,19 +259,7 @@ var closeUploadFileOverlay = function (element, button) {
   });
 };
 /* -------------------------- */
-// 6. Применение эффектов для изображения
-/*
-1. Для эффекта «Хром» — filter: grayscale(0..1)
-filterLevel / 100
-2. Для эффекта «Сепия» — filter: sepia(0..1)
-filterLevel / 100
-3. Для эффекта «Марвин» — filter: invert(0..100%)
-filterLevel + '%'
-4. Для эффекта «Фобос» — filter: blur(0..3px)
-(filterLevel * 3 / 100) + 'px'
-5. Для эффекта «Зной» — filter: brightness(1..3)
-(filterLevel * 3) / 100
-*/
+// 6. Наложение эффекта на изображение
 // 6.1. Функция-конструктор для создания объекта эффекта
 var Effects = function (name, className, filter) {
   this.name = name;
@@ -331,21 +304,6 @@ var changeFilterLevel = function (element, preview, arr) {
     }
   });
 };
-
-/*
-Алгоритм расчета:
-1. х = положение пина разделить на общую длину
-2. Пропорция:
-общая длина - 100% FilterLevel
-    х ------- ?
-
-  filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
-  FILTER_LINE_WIDTH = 495 - 20 - 20;
-Изменяются стили imgUploadPreview.style.filter
-
-Добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
-*/
-
 // 6.5. Изменение размеров изображения
 var changeImgSize = function (area, img, scale, number) {
   var scaleControlSmaller = area.querySelector('.scale__control--smaller');
