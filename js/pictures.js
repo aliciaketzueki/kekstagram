@@ -21,6 +21,13 @@ var COMMENTS_ARR = [
 ];
 var LIKES_AMOUNT_MIN = 15;
 var LIKES_AMOUNT_MAX = 200;
+var FILTER_LINE_WIDTH = 455;
+var EFFECTS_CHROME_MAX = 1;
+var EFFECTS_SEPIA_MAX = 1;
+var EFFECTS_MARVIN_MAX = 100;
+var EFFECTS_PHOBOS_MAX = 3;
+var EFFECTS_HEAT_MAX = 3;
+var EFFECTS_HEAT_MIN = 1;
 var IMAGE_SIZE_MAX = 100;
 var IMAGE_SIZE_MIN = 25;
 var IMAGE_SIZE_STEP = 25;
@@ -264,20 +271,48 @@ var closeUploadFileOverlay = function (element, button) {
 var Effects = function (name, className, filter) {
   this.name = name;
   this.className = className;
-  this.filter = filter;
 };
 // 6.2. Функция создания массива эффектов
 var createEffectsArr = function (arr) {
-  var noneEffect = new Effects('none', 'effects__preview--none', 'filter: none');
-  var chromeEffect = new Effects('chrome', 'effects__preview--chrome', 'filter: grayscale( + (filterLevel / 100) + );');
-  var sepiaEffect = new Effects('sepia', 'effects__preview--sepia', 'filter: sepia( + (filterLevel / 100) + );');
-  var marvinEffect = new Effects('marvin', 'effects__preview--marvin', 'filter: invert( + filterLevel + %);');
-  var phobosEffect = new Effects('phobos', 'effects__preview--phobos', 'filter: blur( + (filterLevel * 3 / 100) + px);');
-  var heatEffect = new Effects('heat', 'effects__preview--heat', 'filter: brightness( + (filterLevel * 3 / 100) + );');
+  var noneEffect = new Effects('none', 'effects__preview--none');
+  var chromeEffect = new Effects('chrome', 'effects__preview--chrome');
+  var sepiaEffect = new Effects('sepia', 'effects__preview--sepia');
+  var marvinEffect = new Effects('marvin', 'effects__preview--marvin');
+  var phobosEffect = new Effects('phobos', 'effects__preview--phobos');
+  var heatEffect = new Effects('heat', 'effects__preview--heat');
 
   arr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
+  return arr;
 };
-// 6.3. Переключение радиокнопок с эффектами
+//6.3. Функция добавления фильтров в массив эффектов
+var addFilterToArr = function (arr, value) {
+  for (var i = 0; i < arr.length; i++) {
+    switch (arr[i].name) {
+      case 'none':
+        arr[i].filter = 'none';
+        break;
+      case 'chrome':
+        arr[i].filter = 'grayscale(' + (value / FILTER_LINE_WIDTH) + ')';
+        break;
+      case 'sepia':
+        arr[i].filter = 'sepia(' + (value / FILTER_LINE_WIDTH) + ')';
+        break;
+      case 'marvin':
+        arr[i].filter = 'invert(' + (value / FILTER_LINE_WIDTH * EFFECTS_MARVIN_MAX) + '%)';
+        break;
+      case 'phobos':
+        arr[i].filter = 'blur(' + (value / FILTER_LINE_WIDTH * EFFECTS_PHOBOS_MAX) + 'px)';
+        break;
+      case 'heat':
+        arr[i].filter = 'brightness(' + (value / FILTER_LINE_WIDTH * EFFECTS_HEAT_MAX - EFFECTS_HEAT_MIN) + ')';
+        break;
+      default:
+        arr[i].filter = '';
+    };
+  }
+  return arr;
+};
+// 6.4. Переключение радиокнопок с эффектами
 var changeEffects = function (element, preview, arr) {
   var effectsRadioButton = element.querySelectorAll('.effects__radio');
   var onEffectsRadioButtonPress = function (evt) {
@@ -294,7 +329,7 @@ var changeEffects = function (element, preview, arr) {
     effectsRadioButton[i].addEventListener('keydown', onEffectsRadioButtonPress);
   }
 };
-// 6.4. Изменение уровня насыщенности
+// 6.5. Изменение уровня насыщенности
 var changeFilterLevel = function (element, preview, arr) {
   var effectLevelPin = element.querySelector('.effect-level__pin');
 
@@ -304,7 +339,7 @@ var changeFilterLevel = function (element, preview, arr) {
     }
   });
 };
-// 6.5. Изменение размеров изображения
+// 6.6. Изменение размеров изображения
 var changeImgSize = function (area, img, scale, number) {
   var scaleControlSmaller = area.querySelector('.scale__control--smaller');
   var scaleControlBigger = area.querySelector('.scale__control--bigger');
@@ -378,5 +413,5 @@ var checkValidityText = function (area) {
     }
   });
 };
-
+/* -------------------------- */
 init();
