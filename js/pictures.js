@@ -35,6 +35,7 @@ var HASHTAG_MAX_LENGTH = 20;
 var HASHTAG_MIN_LENGTH = 2;
 var HASHTAG_AMOUNT = 5;
 var COMMENT_MAX_LENGTH = 140;
+var IMAGE_SIZE_DEFAULT = IMAGE_SIZE_MAX / PERCENT_MAX;
 // 1.2. Выбор случайного числа
 var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -107,15 +108,14 @@ var init = function () {
   var effectsArr = [];
   var pinHandle = imgUpload.querySelector('.effect-level__pin');
   var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
-  var imageSizeDefault = IMAGE_SIZE_MAX / PERCENT_MAX;
 
-  openUploadFileOverlay(imgUpload, uploadFile, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth, imageSizeDefault);
-  closeUploadFileOverlay(imgUpload, imgUploadCancel, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth, imageSizeDefault);
+  openUploadFileOverlay(imgUpload, uploadFile, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
+  closeUploadFileOverlay(imgUpload, imgUploadCancel, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
 
   createEffectsArr(effectsArr);
   changeEffects(imgUpload, imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
   changeFilterLevel(imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
-  changeImgSize(imgUpload, imgUploadPreview, scaleControlValue, imageSizeDefault);
+  changeImgSize(imgUpload, imgUploadPreview, scaleControlValue);
 
   checkValidityHashtags(imgUpload);
   checkValidityText(imgUpload);
@@ -241,7 +241,7 @@ var closeBigPhoto = function (element, ul) {
 /* -------------------------- */
 // 5. Загрузка изображения и показ формы редактирования
 // 5.1. Показ формы редактирования
-var openUploadFileOverlay = function (element, button, img, scale, pin, depth, number) {
+var openUploadFileOverlay = function (element, button, img, scale, pin, depth) {
   button.addEventListener('change', function () {
     element.classList.remove('hidden');
 
@@ -251,16 +251,16 @@ var openUploadFileOverlay = function (element, button, img, scale, pin, depth, n
         evt.stopPropagation();
       } else if (evt.keyCode === ESC_KEYDOWN) {
         element.classList.add('hidden');
-        resetUploadSettings(img, scale, pin, depth, number);
+        resetUploadSettings(img, scale, pin, depth);
       }
     });
   });
 };
 // 5.2. Закрытие формы редактирования
-var closeUploadFileOverlay = function (element, button, img, scale, pin, depth, number) {
+var closeUploadFileOverlay = function (element, button, img, scale, pin, depth) {
   button.addEventListener('click', function () {
     element.classList.add('hidden');
-    resetUploadSettings(img, scale, pin, depth, number);
+    resetUploadSettings(img, scale, pin, depth);
 
     document.removeEventListener('keydown', function (evt) {
       if (evt.keyCode === ESC_KEYDOWN) {
@@ -269,20 +269,20 @@ var closeUploadFileOverlay = function (element, button, img, scale, pin, depth, 
     });
   });
 };
-// 5.3. Сброс настроек изображения 
-var resetUploadSettings = function (img, scale, pin, depth, number) {
+// 5.3. Сброс настроек изображения
+var resetUploadSettings = function (img, scale, pin, depth) {
   img.removeAttribute('class');
   img.style = null;
   pin.style = null;
   depth.style = null;
   scale.value = IMAGE_SIZE_MAX + '%';
-  number = IMAGE_SIZE_MAX / PERCENT_MAX;
+  IMAGE_SIZE_DEFAULT = IMAGE_SIZE_MAX / PERCENT_MAX;
 };
 
 /* -------------------------- */
 // 6. Наложение эффекта на изображение
 // 6.1. Функция-конструктор для создания объекта эффекта
-var Effects = function (name, className, filter) {
+var Effects = function (name, className) {
   this.name = name;
   this.className = className;
 };
@@ -298,7 +298,7 @@ var createEffectsArr = function (arr) {
   arr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
   return arr;
 };
-//6.3. Функция добавления фильтров в массив эффектов
+// 6.3. Функция добавления фильтров в массив эффектов
 var addFilterToArr = function (arr, value) {
   for (var i = 0; i < arr.length; i++) {
     switch (arr[i].name) {
@@ -306,10 +306,10 @@ var addFilterToArr = function (arr, value) {
         arr[i].filter = 'none';
         break;
       case 'chrome':
-        arr[i].filter = 'grayscale(' + (value / FILTER_LINE_WIDTH) + ')';
+        arr[i].filter = 'grayscale(' + (value / FILTER_LINE_WIDTH * EFFECTS_CHROME_MAX) + ')';
         break;
       case 'sepia':
-        arr[i].filter = 'sepia(' + (value / FILTER_LINE_WIDTH) + ')';
+        arr[i].filter = 'sepia(' + (value / FILTER_LINE_WIDTH * EFFECTS_SEPIA_MAX) + ')';
         break;
       case 'marvin':
         arr[i].filter = 'invert(' + (value / FILTER_LINE_WIDTH * EFFECTS_MARVIN_MAX) + '%)';
@@ -322,11 +322,11 @@ var addFilterToArr = function (arr, value) {
         break;
       default:
         arr[i].filter = '';
-    };
+    }
   }
   return arr;
 };
-// 6.4. Переключение радиокнопок с эффектами 
+// 6.4. Переключение радиокнопок с эффектами
 var changeEffects = function (element, preview, arr, pin, depth) {
   var effectsRadioButton = element.querySelectorAll('.effects__radio');
   var effectLevelBlock = element.querySelector('.effect-level');
@@ -398,7 +398,7 @@ var changeFilterLevel = function (preview, arr, pin, depth) {
   });
 };
 // 6.6. Изменение размеров изображения
-var changeImgSize = function (area, img, scale, number) {
+var changeImgSize = function (area, img, scale) {
   var scaleControlSmaller = area.querySelector('.scale__control--smaller');
   var scaleControlBigger = area.querySelector('.scale__control--bigger');
 
@@ -409,8 +409,8 @@ var changeImgSize = function (area, img, scale, number) {
     controlValue = parseInt(scale.value, 10);
     if (controlValue > IMAGE_SIZE_MIN) {
       scale.value = controlValue - IMAGE_SIZE_STEP + '%';
-      number -= (IMAGE_SIZE_STEP / PERCENT_MAX);
-      img.style = 'transform: scale(' + number + ');';
+      IMAGE_SIZE_DEFAULT -= (IMAGE_SIZE_STEP / PERCENT_MAX);
+      img.style = 'transform: scale(' + IMAGE_SIZE_DEFAULT + ')';
     }
   };
 
@@ -418,8 +418,8 @@ var changeImgSize = function (area, img, scale, number) {
     controlValue = parseInt(scale.value, 10);
     if (controlValue < IMAGE_SIZE_MAX) {
       scale.value = controlValue + IMAGE_SIZE_STEP + '%';
-      number += (IMAGE_SIZE_STEP / PERCENT_MAX);
-      img.style = 'transform: scale(' + number + ');';
+      IMAGE_SIZE_DEFAULT += (IMAGE_SIZE_STEP / PERCENT_MAX);
+      img.style = 'transform: scale(' + IMAGE_SIZE_DEFAULT + ')';
     }
   };
 
