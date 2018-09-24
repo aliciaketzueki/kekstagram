@@ -113,7 +113,7 @@ var init = function () {
   closeUploadFileOverlay(imgUpload, imgUploadCancel);
 
   createEffectsArr(effectsArr);
-  changeEffects(imgUpload, imgUploadPreview, effectsArr);
+  changeEffects(imgUpload, imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
   changeFilterLevel(imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
   changeImgSize(imgUpload, imgUploadPreview, scaleControlValue, imageSizeDefault);
 
@@ -313,14 +313,25 @@ var addFilterToArr = function (arr, value) {
   }
   return arr;
 };
-// 6.4. Переключение радиокнопок с эффектами
-var changeEffects = function (element, preview, arr) {
+// 6.4. Переключение радиокнопок с эффектами 
+var changeEffects = function (element, preview, arr, pin, depth) {
   var effectsRadioButton = element.querySelectorAll('.effects__radio');
+  var effectLevelBlock = element.querySelector('.effect-level');
+
   var onEffectsRadioButtonPress = function (evt) {
     preview.removeAttribute('class');
+    pin.style.left = FILTER_LINE_WIDTH + 'px';
+    depth.style.width = FILTER_LINE_WIDTH + 'px';
+
     for (var j = 0; j < arr.length; j++) {
       if (effectsRadioButton[j] === evt.target) {
         preview.classList.add(arr[j].className);
+        preview.style.filter = null;
+      }
+      if (effectsRadioButton[0] === evt.target) {
+        effectLevelBlock.classList.add('hidden');
+      } else {
+        effectLevelBlock.classList.remove('hidden');
       }
     }
   };
