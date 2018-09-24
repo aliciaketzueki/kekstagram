@@ -105,7 +105,8 @@ var init = function () {
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
   var scaleControlValue = imgUpload.querySelector('.scale__control--value');
   var effectsArr = [];
-
+  var pinHandle = imgUpload.querySelector('.effect-level__pin');
+  var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
   var imageSizeDefault = IMAGE_SIZE_MAX / PERCENT_MAX;
 
   openUploadFileOverlay(imgUpload, uploadFile);
@@ -113,7 +114,7 @@ var init = function () {
 
   createEffectsArr(effectsArr);
   changeEffects(imgUpload, imgUploadPreview, effectsArr);
-  changeFilterLevel(imgUpload, imgUploadPreview, effectsArr);
+  changeFilterLevel(imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
   changeImgSize(imgUpload, imgUploadPreview, scaleControlValue, imageSizeDefault);
 
   checkValidityHashtags(imgUpload);
@@ -330,13 +331,45 @@ var changeEffects = function (element, preview, arr) {
   }
 };
 // 6.5. Изменение уровня насыщенности
-var changeFilterLevel = function (element, preview, arr) {
-  var effectLevelPin = element.querySelector('.effect-level__pin');
+var changeFilterLevel = function (preview, arr, pin, depth) {
 
-  effectLevelPin.addEventListener('mouseup', function () {
-    for (var i = 0; i < arr.length; i++) {
-      preview.style.filter = arr[i].filter;
-    }
+  pin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var startCoordsX = evt.clientX;
+
+    var calcCoords = function (move) {
+      var shift = startCoordsX - move.clientX;
+      startCoordsX = move.clientX;
+      var newCoordsX = pin.offsetLeft - shift;
+
+      if (newCoordsX <= FILTER_LINE_WIDTH && newCoordsX >= 0) {
+        pin.style.left = newCoordsX + 'px';
+        depth.style.width = newCoordsX + 'px';
+      }
+      return newCoordsX;
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      calcCoords(moveEvt);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      var newEffectsArr = addFilterToArr(arr, calcCoords(upEvt));
+      for (var i = 0; i < arr.length; i++) {
+        if (preview.classList.contains(arr[i].className)) {
+          preview.style.filter = newEffectsArr[i].filter;
+        }
+      }
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   });
 };
 // 6.6. Изменение размеров изображения
