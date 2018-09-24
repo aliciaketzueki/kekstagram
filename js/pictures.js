@@ -109,8 +109,8 @@ var init = function () {
   var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
   var imageSizeDefault = IMAGE_SIZE_MAX / PERCENT_MAX;
 
-  openUploadFileOverlay(imgUpload, uploadFile);
-  closeUploadFileOverlay(imgUpload, imgUploadCancel);
+  openUploadFileOverlay(imgUpload, uploadFile, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth, imageSizeDefault);
+  closeUploadFileOverlay(imgUpload, imgUploadCancel, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth, imageSizeDefault);
 
   createEffectsArr(effectsArr);
   changeEffects(imgUpload, imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
@@ -241,7 +241,7 @@ var closeBigPhoto = function (element, ul) {
 /* -------------------------- */
 // 5. Загрузка изображения и показ формы редактирования
 // 5.1. Показ формы редактирования
-var openUploadFileOverlay = function (element, button) {
+var openUploadFileOverlay = function (element, button, img, scale, pin, depth, number) {
   button.addEventListener('change', function () {
     element.classList.remove('hidden');
 
@@ -251,14 +251,17 @@ var openUploadFileOverlay = function (element, button) {
         evt.stopPropagation();
       } else if (evt.keyCode === ESC_KEYDOWN) {
         element.classList.add('hidden');
+        resetUploadSettings(img, scale, pin, depth, number);
       }
     });
   });
 };
 // 5.2. Закрытие формы редактирования
-var closeUploadFileOverlay = function (element, button) {
+var closeUploadFileOverlay = function (element, button, img, scale, pin, depth, number) {
   button.addEventListener('click', function () {
     element.classList.add('hidden');
+    resetUploadSettings(img, scale, pin, depth, number);
+
     document.removeEventListener('keydown', function (evt) {
       if (evt.keyCode === ESC_KEYDOWN) {
         element.classList.add('hidden');
@@ -266,6 +269,16 @@ var closeUploadFileOverlay = function (element, button) {
     });
   });
 };
+// 5.3. Сброс настроек изображения 
+var resetUploadSettings = function (img, scale, pin, depth, number) {
+  img.removeAttribute('class');
+  img.style = null;
+  pin.style = null;
+  depth.style = null;
+  scale.value = IMAGE_SIZE_MAX + '%';
+  number = IMAGE_SIZE_MAX / PERCENT_MAX;
+};
+
 /* -------------------------- */
 // 6. Наложение эффекта на изображение
 // 6.1. Функция-конструктор для создания объекта эффекта
@@ -367,6 +380,7 @@ var changeFilterLevel = function (preview, arr, pin, depth) {
 
     var onMouseUp = function (upEvt) {
       upEvt.preventDefault();
+      calcCoords(upEvt);
 
       var newEffectsArr = addFilterToArr(arr, calcCoords(upEvt));
       for (var i = 0; i < arr.length; i++) {
