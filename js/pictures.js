@@ -1,6 +1,7 @@
 'use strict';
 // 1. Общие функции и константы
 // 1.1. Константы
+var PERCENT_MAX = 100;
 var ESC_KEYDOWN = 27;
 var DESCRIPTION_ARR = [
   'Тестим новую камеру!',
@@ -18,6 +19,15 @@ var COMMENTS_ARR = [
   'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.',
   'Лица у людей на фотке перекошены, как будто их избивают. Как можно было поймать такой неудачный момент?!'
 ];
+var LIKES_AMOUNT_MIN = 15;
+var LIKES_AMOUNT_MAX = 200;
+var IMAGE_SIZE_MAX = 100;
+var IMAGE_SIZE_MIN = 25;
+var IMAGE_SIZE_STEP = 25;
+var HASHTAG_MAX_LENGTH = 20;
+var HASHTAG_MIN_LENGTH = 2;
+var HASHTAG_AMOUNT = 5;
+var COMMENT_MAX_LENGTH = 140;
 // 1.2. Выбор случайного числа
 var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -44,7 +54,29 @@ var deleteNodeElements = function (parent) {
     parent.removeChild(parent.lastChild);
   }
 };
-// 1.6. Функция инициализации
+// 1.6. Проверка повторения элементов в массиве
+var calcRepeats = function (arr) {
+  var repeat = 0;
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = i + 1; j < arr.length; j++) {
+      if (arr[j] === arr[i]) {
+        repeat++;
+      }
+    }
+  }
+  return repeat;
+};
+// 1.7. Поиск символа в строке
+var checkLetters = function (arr, symbol) {
+  var letter = 0;
+  for (var j = 1; j <= arr.length; j++) {
+    if (arr.charAt(j) === symbol) {
+      letter++;
+    }
+  }
+  return letter;
+};
+// 1.8. Функция инициализации
 var init = function () {
   var pictureIndex = createArr(1, 26);
   var photos = [];
@@ -59,19 +91,26 @@ var init = function () {
   var bigPictureComment = bigPictureComments.querySelector('.social__comment');
   openBigPhoto(bigPicture, photos, bigPictureComments, bigPictureComment);
   closeBigPhoto(bigPicture, bigPictureComments);
-
+  // Форма редактирования
   var uploadFile = document.getElementById('upload-file');
   var imgUpload = document.querySelector('.img-upload__overlay');
   var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
+  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
+  var scaleControlValue = imgUpload.querySelector('.scale__control--value');
+  var effectsArr = [];
+
+  var imageSizeDefault = IMAGE_SIZE_MAX / PERCENT_MAX;
+
   openUploadFileOverlay(imgUpload, uploadFile);
   closeUploadFileOverlay(imgUpload, imgUploadCancel);
 
-  var effectsArr = [];
   createEffectsArr(effectsArr);
-
-  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
   changeEffects(imgUpload, imgUploadPreview, effectsArr);
   changeFilterLevel(imgUpload, imgUploadPreview, effectsArr);
+  changeImgSize(imgUpload, imgUploadPreview, scaleControlValue, imageSizeDefault);
+
+  checkValidityHashtags(imgUpload);
+  checkValidityText(imgUpload);
 };
 
 /* -------------------------- */
@@ -101,7 +140,7 @@ var createPhotos = function (element, arr) {
   for (var i = 0; i < 25; i++) {
     var photo = {
       url: 'photos/' + renderPictureIndex(element) + '.jpg',
-      likes: getRandomArbitary(15, 200),
+      likes: getRandomArbitary(LIKES_AMOUNT_MIN, LIKES_AMOUNT_MAX),
       comments: createComments(),
       description: selectRandomElement(DESCRIPTION_ARR)
     };
@@ -155,13 +194,6 @@ var addComments = function (j, arr, ul, li) {
   ul.appendChild(fragment);
 };
 // 4.4. Показ разных больших фотографий при нажатии на маленькие
-/*
-element = bigPicture
-arr = photos
-arrComments = photos[j].comments[k]
-ul = bigPictureComments
-li = bigPictureComment
-*/
 var openBigPhoto = function (element, arr, ul, li) {
   var bigPictureArr = document.querySelectorAll('.picture');
   var onLittlePicturePress = function (evt) {
@@ -206,7 +238,10 @@ var openUploadFileOverlay = function (element, button) {
     element.classList.remove('hidden');
 
     document.addEventListener('keydown', function (evt) {
-      if (evt.keyCode === ESC_KEYDOWN) {
+      var target = evt.target;
+      if (target.classList.contains('text__hashtags') || target.classList.contains('text__description')) {
+        evt.stopPropagation();
+      } else if (evt.keyCode === ESC_KEYDOWN) {
         element.classList.add('hidden');
       }
     });
@@ -223,19 +258,8 @@ var closeUploadFileOverlay = function (element, button) {
     });
   });
 };
-// 6. Применение эффектов для изображения
-/*
-1. Для эффекта «Хром» — filter: grayscale(0..1)
-filterLevel / 100
-2. Для эффекта «Сепия» — filter: sepia(0..1)
-filterLevel / 100
-3. Для эффекта «Марвин» — filter: invert(0..100%)
-filterLevel + '%'
-4. Для эффекта «Фобос» — filter: blur(0..3px)
-(filterLevel * 3 / 100) + 'px'
-5. Для эффекта «Зной» — filter: brightness(1..3)
-(filterLevel * 3) / 100
-*/
+/* -------------------------- */
+// 6. Наложение эффекта на изображение
 // 6.1. Функция-конструктор для создания объекта эффекта
 var Effects = function (name, className, filter) {
   this.name = name;
@@ -280,18 +304,79 @@ var changeFilterLevel = function (element, preview, arr) {
     }
   });
 };
+// 6.5. Изменение размеров изображения
+var changeImgSize = function (area, img, scale, number) {
+  var scaleControlSmaller = area.querySelector('.scale__control--smaller');
+  var scaleControlBigger = area.querySelector('.scale__control--bigger');
 
-/*
-Алгоритм расчета:
-1. х = положение пина разделить на общую длину
-2. Пропорция:
-общая длина - 100% FilterLevel
-    х ------- ?
+  scale.value = IMAGE_SIZE_MAX + '%';
+  var controlValue;
 
-  filterLevel = (effectLevelPin.style.left * 100 / FILTER_LINE_WIDTH);
-  FILTER_LINE_WIDTH = 495 - 20 - 20;
-Изменяются стили imgUploadPreview.style.filter
+  var onScaleControlSmallerPress = function () {
+    controlValue = parseInt(scale.value, 10);
+    if (controlValue > IMAGE_SIZE_MIN) {
+      scale.value = controlValue - IMAGE_SIZE_STEP + '%';
+      number -= (IMAGE_SIZE_STEP / PERCENT_MAX);
+      img.style = 'transform: scale(' + number + ');';
+    }
+  };
 
-Добавим на пин слайдера .effect-level__pin обработчик события mouseup, который будет согласно ТЗ изменять уровень насыщенности фильтра для изображения. Для определения уровня насыщенности, нужно рассчитать положение пина слайдера относительно всего блока и воспользоваться пропорцией, чтобы понять, какой уровень эффекта нужно применить.
-*/
+  var onScaleControlBiggerPress = function () {
+    controlValue = parseInt(scale.value, 10);
+    if (controlValue < IMAGE_SIZE_MAX) {
+      scale.value = controlValue + IMAGE_SIZE_STEP + '%';
+      number += (IMAGE_SIZE_STEP / PERCENT_MAX);
+      img.style = 'transform: scale(' + number + ');';
+    }
+  };
+
+  scaleControlBigger.addEventListener('click', onScaleControlBiggerPress);
+  scaleControlSmaller.addEventListener('click', onScaleControlSmallerPress);
+};
+
+/* -------------------------- */
+// 7. Валидация
+// 7.1. Валидация хэш-тегов
+var checkValidityHashtags = function (area) {
+  var textHashtag = area.querySelector('.text__hashtags');
+
+  textHashtag.addEventListener('input', function (evt) {
+    var target = evt.target;
+    var hashtags = target.value.toLowerCase().split(' ');
+
+    for (var i = 0; i < hashtags.length; i++) {
+      var currentHashtag = hashtags[i];
+
+      if (currentHashtag.charAt(0) !== '#') {
+        target.setCustomValidity('Хэш-теги должны начинаться с символа #');
+      } else if (checkLetters(currentHashtag, '#') > 0) {
+        target.setCustomValidity('Хэш-теги должны разделяться пробелом');
+      } else if (currentHashtag.length < HASHTAG_MIN_LENGTH) {
+        target.setCustomValidity('Хэш-тег не может состоять из одной решётки');
+      } else if (currentHashtag.length > HASHTAG_MAX_LENGTH) {
+        target.setCustomValidity('Длина хэш-тега не должна быть больше ' + HASHTAG_MAX_LENGTH + ' символов');
+      } else if (hashtags.length > HASHTAG_AMOUNT) {
+        target.setCustomValidity('Нельзя указать больше ' + HASHTAG_AMOUNT + ' хэш-тегов');
+      } else if (calcRepeats(hashtags) > 0) {
+        target.setCustomValidity('Хэш-теги не могут повторяться');
+      } else {
+        target.setCustomValidity('');
+      }
+    }
+  });
+};
+// 7.2. Валидация комментария
+var checkValidityText = function (area) {
+  var textDescription = area.querySelector('.text__description');
+
+  textDescription.addEventListener('input', function (evt) {
+    var target = evt.target;
+    if (target.value.length > COMMENT_MAX_LENGTH) {
+      target.setCustomValidity('Длина комментария не должна превышать ' + COMMENT_MAX_LENGTH + ' символов');
+    } else {
+      target.setCustomValidity('');
+    }
+  });
+};
+
 init();
