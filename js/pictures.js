@@ -84,42 +84,6 @@ var checkLetters = function (arr, symbol) {
   }
   return letter;
 };
-// 1.8. Функция инициализации
-var init = function () {
-  var pictureIndex = createArr(1, 26);
-  var photos = [];
-  createPhotos(pictureIndex, photos);
-
-  var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-  var pictureDestination = document.querySelector('.pictures');
-  addElements(photos, pictureDestination, pictureTemplate);
-
-  var bigPicture = document.querySelector('.big-picture');
-  var bigPictureComments = bigPicture.querySelector('.social__comments');
-  var bigPictureComment = bigPictureComments.querySelector('.social__comment');
-  openBigPhoto(bigPicture, photos, bigPictureComments, bigPictureComment);
-  closeBigPhoto(bigPicture, bigPictureComments);
-  // Форма редактирования
-  var uploadFile = document.getElementById('upload-file');
-  var imgUpload = document.querySelector('.img-upload__overlay');
-  var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
-  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
-  var scaleControlValue = imgUpload.querySelector('.scale__control--value');
-  var effectsArr = [];
-  var pinHandle = imgUpload.querySelector('.effect-level__pin');
-  var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
-
-  openUploadFileOverlay(imgUpload, uploadFile, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
-  closeUploadFileOverlay(imgUpload, imgUploadCancel, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
-
-  createEffectsArr(effectsArr);
-  changeEffects(imgUpload, imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
-  changeFilterLevel(imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
-  changeImgSize(imgUpload, imgUploadPreview, scaleControlValue);
-
-  checkValidityHashtags(imgUpload);
-  checkValidityText(imgUpload);
-};
 
 /* -------------------------- */
 // 2. Создание массива фотографий
@@ -471,5 +435,3 @@ var checkValidityText = function (area) {
     }
   });
 };
-/* -------------------------- */
-init();
