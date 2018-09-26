@@ -21,6 +21,13 @@ var COMMENTS_ARR = [
 ];
 var LIKES_AMOUNT_MIN = 15;
 var LIKES_AMOUNT_MAX = 200;
+var FILTER_LINE_WIDTH = 455;
+var EFFECTS_CHROME_MAX = 1;
+var EFFECTS_SEPIA_MAX = 1;
+var EFFECTS_MARVIN_MAX = 100;
+var EFFECTS_PHOBOS_MAX = 3;
+var EFFECTS_HEAT_MAX = 3;
+var EFFECTS_HEAT_MIN = 1;
 var IMAGE_SIZE_MAX = 100;
 var IMAGE_SIZE_MIN = 25;
 var IMAGE_SIZE_STEP = 25;
@@ -28,6 +35,7 @@ var HASHTAG_MAX_LENGTH = 20;
 var HASHTAG_MIN_LENGTH = 2;
 var HASHTAG_AMOUNT = 5;
 var COMMENT_MAX_LENGTH = 140;
+var IMAGE_SIZE_DEFAULT = IMAGE_SIZE_MAX / PERCENT_MAX;
 // 1.2. Выбор случайного числа
 var getRandomArbitary = function (min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -98,16 +106,16 @@ var init = function () {
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
   var scaleControlValue = imgUpload.querySelector('.scale__control--value');
   var effectsArr = [];
+  var pinHandle = imgUpload.querySelector('.effect-level__pin');
+  var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
 
-  var imageSizeDefault = IMAGE_SIZE_MAX / PERCENT_MAX;
-
-  openUploadFileOverlay(imgUpload, uploadFile);
-  closeUploadFileOverlay(imgUpload, imgUploadCancel);
+  openUploadFileOverlay(imgUpload, uploadFile, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
+  closeUploadFileOverlay(imgUpload, imgUploadCancel, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
 
   createEffectsArr(effectsArr);
-  changeEffects(imgUpload, imgUploadPreview, effectsArr);
-  changeFilterLevel(imgUpload, imgUploadPreview, effectsArr);
-  changeImgSize(imgUpload, imgUploadPreview, scaleControlValue, imageSizeDefault);
+  changeEffects(imgUpload, imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
+  changeFilterLevel(imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
+  changeImgSize(imgUpload, imgUploadPreview, scaleControlValue);
 
   checkValidityHashtags(imgUpload);
   checkValidityText(imgUpload);
@@ -233,7 +241,7 @@ var closeBigPhoto = function (element, ul) {
 /* -------------------------- */
 // 5. Загрузка изображения и показ формы редактирования
 // 5.1. Показ формы редактирования
-var openUploadFileOverlay = function (element, button) {
+var openUploadFileOverlay = function (element, button, img, scale, pin, depth) {
   button.addEventListener('change', function () {
     element.classList.remove('hidden');
 
@@ -243,14 +251,17 @@ var openUploadFileOverlay = function (element, button) {
         evt.stopPropagation();
       } else if (evt.keyCode === ESC_KEYDOWN) {
         element.classList.add('hidden');
+        resetUploadSettings(img, scale, pin, depth);
       }
     });
   });
 };
 // 5.2. Закрытие формы редактирования
-var closeUploadFileOverlay = function (element, button) {
+var closeUploadFileOverlay = function (element, button, img, scale, pin, depth) {
   button.addEventListener('click', function () {
     element.classList.add('hidden');
+    resetUploadSettings(img, scale, pin, depth);
+
     document.removeEventListener('keydown', function (evt) {
       if (evt.keyCode === ESC_KEYDOWN) {
         element.classList.add('hidden');
@@ -258,33 +269,82 @@ var closeUploadFileOverlay = function (element, button) {
     });
   });
 };
+// 5.3. Сброс настроек изображения
+var resetUploadSettings = function (img, scale, pin, depth) {
+  img.removeAttribute('class');
+  img.style = null;
+  pin.style = null;
+  depth.style = null;
+  scale.value = IMAGE_SIZE_MAX + '%';
+  IMAGE_SIZE_DEFAULT = IMAGE_SIZE_MAX / PERCENT_MAX;
+};
+
 /* -------------------------- */
 // 6. Наложение эффекта на изображение
 // 6.1. Функция-конструктор для создания объекта эффекта
-var Effects = function (name, className, filter) {
+var Effects = function (name, className) {
   this.name = name;
   this.className = className;
-  this.filter = filter;
 };
 // 6.2. Функция создания массива эффектов
 var createEffectsArr = function (arr) {
-  var noneEffect = new Effects('none', 'effects__preview--none', 'filter: none');
-  var chromeEffect = new Effects('chrome', 'effects__preview--chrome', 'filter: grayscale( + (filterLevel / 100) + );');
-  var sepiaEffect = new Effects('sepia', 'effects__preview--sepia', 'filter: sepia( + (filterLevel / 100) + );');
-  var marvinEffect = new Effects('marvin', 'effects__preview--marvin', 'filter: invert( + filterLevel + %);');
-  var phobosEffect = new Effects('phobos', 'effects__preview--phobos', 'filter: blur( + (filterLevel * 3 / 100) + px);');
-  var heatEffect = new Effects('heat', 'effects__preview--heat', 'filter: brightness( + (filterLevel * 3 / 100) + );');
+  var noneEffect = new Effects('none', 'effects__preview--none');
+  var chromeEffect = new Effects('chrome', 'effects__preview--chrome');
+  var sepiaEffect = new Effects('sepia', 'effects__preview--sepia');
+  var marvinEffect = new Effects('marvin', 'effects__preview--marvin');
+  var phobosEffect = new Effects('phobos', 'effects__preview--phobos');
+  var heatEffect = new Effects('heat', 'effects__preview--heat');
 
   arr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
+  return arr;
 };
-// 6.3. Переключение радиокнопок с эффектами
-var changeEffects = function (element, preview, arr) {
+// 6.3. Функция добавления фильтров в массив эффектов
+var addFilterToArr = function (arr, value) {
+  for (var i = 0; i < arr.length; i++) {
+    switch (arr[i].name) {
+      case 'none':
+        arr[i].filter = 'none';
+        break;
+      case 'chrome':
+        arr[i].filter = 'grayscale(' + (value / FILTER_LINE_WIDTH * EFFECTS_CHROME_MAX) + ')';
+        break;
+      case 'sepia':
+        arr[i].filter = 'sepia(' + (value / FILTER_LINE_WIDTH * EFFECTS_SEPIA_MAX) + ')';
+        break;
+      case 'marvin':
+        arr[i].filter = 'invert(' + (value / FILTER_LINE_WIDTH * EFFECTS_MARVIN_MAX) + '%)';
+        break;
+      case 'phobos':
+        arr[i].filter = 'blur(' + (value / FILTER_LINE_WIDTH * EFFECTS_PHOBOS_MAX) + 'px)';
+        break;
+      case 'heat':
+        arr[i].filter = 'brightness(' + (value / FILTER_LINE_WIDTH * EFFECTS_HEAT_MAX - EFFECTS_HEAT_MIN) + ')';
+        break;
+      default:
+        arr[i].filter = '';
+    }
+  }
+  return arr;
+};
+// 6.4. Переключение радиокнопок с эффектами
+var changeEffects = function (element, preview, arr, pin, depth) {
   var effectsRadioButton = element.querySelectorAll('.effects__radio');
+  var effectLevelBlock = element.querySelector('.effect-level');
+
   var onEffectsRadioButtonPress = function (evt) {
     preview.removeAttribute('class');
+    pin.style.left = FILTER_LINE_WIDTH + 'px';
+    depth.style.width = FILTER_LINE_WIDTH + 'px';
+
     for (var j = 0; j < arr.length; j++) {
       if (effectsRadioButton[j] === evt.target) {
         preview.classList.add(arr[j].className);
+        preview.style.filter = null;
+      }
+      if (effectsRadioButton[0] === evt.target) {
+        effectLevelBlock.classList.add('hidden');
+      } else {
+        effectLevelBlock.classList.remove('hidden');
       }
     }
   };
@@ -294,18 +354,51 @@ var changeEffects = function (element, preview, arr) {
     effectsRadioButton[i].addEventListener('keydown', onEffectsRadioButtonPress);
   }
 };
-// 6.4. Изменение уровня насыщенности
-var changeFilterLevel = function (element, preview, arr) {
-  var effectLevelPin = element.querySelector('.effect-level__pin');
+// 6.5. Изменение уровня насыщенности
+var changeFilterLevel = function (preview, arr, pin, depth) {
 
-  effectLevelPin.addEventListener('mouseup', function () {
-    for (var i = 0; i < arr.length; i++) {
-      preview.style.filter = arr[i].filter;
-    }
+  pin.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+    var startCoordsX = evt.clientX;
+
+    var calcCoords = function (move) {
+      var shift = startCoordsX - move.clientX;
+      startCoordsX = move.clientX;
+      var newCoordsX = pin.offsetLeft - shift;
+
+      if (newCoordsX <= FILTER_LINE_WIDTH && newCoordsX >= 0) {
+        pin.style.left = newCoordsX + 'px';
+        depth.style.width = newCoordsX + 'px';
+      }
+      return newCoordsX;
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+      calcCoords(moveEvt);
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+      calcCoords(upEvt);
+
+      var newEffectsArr = addFilterToArr(arr, calcCoords(upEvt));
+      for (var i = 0; i < arr.length; i++) {
+        if (preview.classList.contains(arr[i].className)) {
+          preview.style.filter = newEffectsArr[i].filter;
+        }
+      }
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
   });
 };
-// 6.5. Изменение размеров изображения
-var changeImgSize = function (area, img, scale, number) {
+// 6.6. Изменение размеров изображения
+var changeImgSize = function (area, img, scale) {
   var scaleControlSmaller = area.querySelector('.scale__control--smaller');
   var scaleControlBigger = area.querySelector('.scale__control--bigger');
 
@@ -316,8 +409,8 @@ var changeImgSize = function (area, img, scale, number) {
     controlValue = parseInt(scale.value, 10);
     if (controlValue > IMAGE_SIZE_MIN) {
       scale.value = controlValue - IMAGE_SIZE_STEP + '%';
-      number -= (IMAGE_SIZE_STEP / PERCENT_MAX);
-      img.style = 'transform: scale(' + number + ');';
+      IMAGE_SIZE_DEFAULT -= (IMAGE_SIZE_STEP / PERCENT_MAX);
+      img.style = 'transform: scale(' + IMAGE_SIZE_DEFAULT + ')';
     }
   };
 
@@ -325,8 +418,8 @@ var changeImgSize = function (area, img, scale, number) {
     controlValue = parseInt(scale.value, 10);
     if (controlValue < IMAGE_SIZE_MAX) {
       scale.value = controlValue + IMAGE_SIZE_STEP + '%';
-      number += (IMAGE_SIZE_STEP / PERCENT_MAX);
-      img.style = 'transform: scale(' + number + ');';
+      IMAGE_SIZE_DEFAULT += (IMAGE_SIZE_STEP / PERCENT_MAX);
+      img.style = 'transform: scale(' + IMAGE_SIZE_DEFAULT + ')';
     }
   };
 
@@ -378,5 +471,5 @@ var checkValidityText = function (area) {
     }
   });
 };
-
+/* -------------------------- */
 init();
