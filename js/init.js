@@ -37,4 +37,6 @@
   // модуль form.js
   window.form.checkValidityHashtags(imgUpload);
   window.form.checkValidityText(imgUpload);
+
+  window.backend.saveData(new FormData(window.form.formData), window.form.submitHandler, window.form.errorHandler);
 })();

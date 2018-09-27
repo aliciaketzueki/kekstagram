@@ -53,6 +53,45 @@
           target.setCustomValidity('');
         }
       });
+    },
+    formData: document.querySelector('.img-upload__form'),
+    // Отправка формы
+    submitHandler: function () {
+      var imgUpload = document.querySelector('.img-upload__overlay');
+      var templateSuccess = document.querySelector('#success').content.querySelector('.success');
+      var main = document.querySelector('main');
+
+      window.form.formData.addEventListener('submit', function (evt) {
+        imgUpload.classList.add('hidden');
+        evt.preventDefault();
+
+        var successBlock = templateSuccess.cloneNode(true);
+        main.appendChild(successBlock);
+      });
+    },
+    errorHandler: function () {
+      var templateError = document.querySelector('#error').content.querySelector('.error');
+      var main = document.querySelector('main');
+
+      var errorBlock = templateError.cloneNode(true);
+      main.appendChild(errorBlock);
+
+      var errorButtons = errorBlock.querySelectorAll('.error__button');
+      for (var i = 0; i < errorButtons.length; i++) {
+        errorButtons[i].addEventListener('click', function () {
+          main.removeChild(errorBlock);
+        });
+      }
+
+      document.addEventListener('keydown', function (evt) {
+        if (evt.keyCode === window.const.ESC_KEYDOWN) {
+          main.removeChild(errorBlock);
+        }
+      });
+
+      document.addEventListener('click', function () {
+        main.removeChild(errorBlock);
+      });
     }
   };
 })();
