@@ -53,66 +53,6 @@
           target.setCustomValidity('');
         }
       });
-    },
-    // Успешный сценарий отправки формы
-    formData: document.querySelector('.img-upload__form'),
-    submitHandler: function () {
-      var imgUpload = document.querySelector('.img-upload__overlay');
-      var templateSuccess = document.querySelector('#success').content.querySelector('.success');
-      var main = document.querySelector('main');
-      imgUpload.classList.add('hidden');
-
-      var successBlock = templateSuccess.cloneNode(true);
-      main.appendChild(successBlock);
-
-      var successButton = successBlock.querySelector('.success__button');
-      successButton.addEventListener('click', function () {
-        main.removeChild(successBlock);
-      });
-
-      document.addEventListener('keydown', function (evt) {
-        if (evt.keyCode === window.const.ESC_KEYDOWN) {
-          main.removeChild(successBlock);
-        }
-      });
-
-      document.addEventListener('click', function () {
-        main.removeChild(successBlock);
-      }); 
-    },
-    // Ошибка отправки формы
-    errorHandler: function (errorMessage) {
-      var templateError = document.querySelector('#error').content.querySelector('.error');
-      var main = document.querySelector('main');
-
-      var errorBlock = templateError.cloneNode(true);
-      errorBlock.querySelector('.error__title').textContent = errorMessage;
-      main.appendChild(errorBlock);
-
-      var errorButtons = errorBlock.querySelectorAll('.error__button');
-      for (var i = 0; i < errorButtons.length; i++) {
-        errorButtons[i].addEventListener('click', function () {
-          main.removeChild(errorBlock);
-        });
-      }
-
-      document.addEventListener('keydown', function (evt) {
-        if (evt.keyCode === window.const.ESC_KEYDOWN) {
-          main.removeChild(errorBlock);
-        }
-      });
-
-      document.addEventListener('click', function () {
-        main.removeChild(errorBlock);
-      });
-    },
-    // Отправка формы  
-    submitForm: function () {
-      window.form.formData.addEventListener('submit', function (evt) {
-        evt.preventDefault();
-        var formData = new FormData(window.form.formData);
-        window.backend.saveData(formData, window.form.submitHandler, window.form.errorHandler);
-      });
     }
   };
 })();

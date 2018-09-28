@@ -51,13 +51,11 @@
       bigPictureCancel.addEventListener('click', function () {
         element.classList.add('hidden');
         window.util.deleteNodeElements(ul);
-      });
-
-      document.addEventListener('keydown', function (evt) {
-        if (evt.keyCode === window.const.ESC_KEYDOWN) {
-          element.classList.add('hidden');
-          window.util.deleteNodeElements(ul);
-        }
+        document.addEventListener('keydown', function (evt) {
+          if (evt.keyCode === window.const.ESC_KEYDOWN) {
+            element.classList.add('hidden');
+          }
+        });
       });
     }
   };
