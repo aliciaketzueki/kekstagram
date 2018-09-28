@@ -1,10 +1,12 @@
 'use strict';
 (function () {
+  var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+  var pictureIndex = window.util.createArr(1, 26);
   // Генерация случайного URL у фотографий
-  var renderPictureIndex = function (arr) {
-    var rand = window.util.getRandomArbitary(1, arr.length - 1);
-    var randomElement = arr[rand];
-    arr.splice(rand, 1);
+  var renderPictureIndex = function () {
+    var rand = window.util.getRandomArbitary(1, pictureIndex.length - 1);
+    var randomElement = pictureIndex[rand];
+    pictureIndex.splice(rand, 1);
     return randomElement;
   };
   // Cоздание случайного количества комментариев к фото
@@ -21,41 +23,54 @@
     return comments;
   };
   // Копирование шаблона маленькой фотографии и изменение ее свойств
-  var createDomElements = function (photos, template) {
-    var pictureItem = template.cloneNode(true);
-    pictureItem.querySelector('.picture__img').src = photos.url;
-    pictureItem.querySelector('.picture__likes').textContent = photos.likes;
-    pictureItem.querySelector('.picture__comments').textContent = photos.comments.length;
+  var createDomElements = function (arr) {
+    var pictureItem = pictureTemplate.cloneNode(true);
+    pictureItem.querySelector('.picture__img').src = arr.url;
+    pictureItem.querySelector('.picture__likes').textContent = arr.likes;
+    pictureItem.querySelector('.picture__comments').textContent = arr.comments.length;
     return pictureItem;
   };
-
+  // Создание массива объектов фотографий
+  var createPhotos = function (arr) {
+    for (var i = 0; i < arr.length; i++) {
+      var photo = {
+        url: arr[i].url,
+        likes: arr[i].likes,
+        comments: arr[i].comments,
+        description: arr[i].description
+      };
+      arr[i] = photo;
+    }
+    return arr;
+  }
   window.pictures = {
-    // Создание массива объектов фотографий с полученными ранее свойствами
-    createPhotos: function (element, arr) {
-      for (var i = 0; i < 25; i++) {
-        var photo = {
-          url: 'photos/' + renderPictureIndex(element) + '.jpg',
-          likes: window.util.getRandomArbitary(window.const.LIKES_AMOUNT_MIN, window.const.LIKES_AMOUNT_MAX),
-          comments: createComments(),
-          description: window.util.selectRandomElement(window.const.DESCRIPTION_ARR)
-        };
-        arr[i] = photo;
-      }
-      return arr;
-    },
-    // Добавление созданных DOM-элементов маленьких фото в разметку
-    successHandler: function (photos) {
-      var pictureDestination = document.querySelector('.pictures');
-      var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-      var fragment = document.createDocumentFragment();
-      for (var j = 0; j < photos.length; j++) {
-        fragment.appendChild(createDomElements(photos[j], pictureTemplate));
-      }
-      pictureDestination.appendChild(fragment);
-    },
-    // Ошибка добавления
-    errorHandler: function () {
-      
+    photos: [],
+    // Создание массива фотографий
+    createNewPhotosArr: function () {
+      // Добавление маленьких фото в разметку
+      var successHandler = function (arr) {
+        var pictureDestination = document.querySelector('.pictures');
+        var fragment = document.createDocumentFragment();
+        for (var j = 0; j < arr.length; j++) {
+          fragment.appendChild(createDomElements(arr[j]));
+        }
+        pictureDestination.appendChild(fragment);
+        window.pictures.photos.push(createPhotos(arr));
+      };
+      // Ошибка добавления
+      var errorHandler = function (errorMessage) {
+        var node = document.createElement('div');
+        node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+        node.style.position = 'absolute';
+        node.style.left = 0;
+        node.style.right = 0;
+        node.style.fontSize = '30px';
+
+        node.textContent = errorMessage;
+        document.body.insertAdjacentElement('afterbegin', node);
+      };
+
+      window.backend.uploadData(successHandler, errorHandler);
     }
   };
 })();

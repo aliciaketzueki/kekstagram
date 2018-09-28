@@ -1,14 +1,6 @@
 'use strict';
 (function () {
   window.util = {
-    // Нажатие на ESC
-    onEscPress: function (element) {
-      document.addEventListener('keydown', function (evt) {
-        if (evt.keyCode === window.const.ESC_KEYDOWN) {
-          element.classList.add('hidden');
-        }
-      });
-    },
     // Выбор случайного числа
     getRandomArbitary: function (min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;

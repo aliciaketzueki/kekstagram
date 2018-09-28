@@ -2,7 +2,7 @@
 (function () {
   window.backend = {
     // Загрузка данных с сервера
-    uploadData: function (onSuccess, onError) {
+    uploadData: function (onLoad, onError) {
       var url = 'https://js.dump.academy/kekstagram/data';
       
       var xhr = new XMLHttpRequest();
@@ -11,7 +11,7 @@
       xhr.addEventListener('load', function () {
         switch (xhr.status) {
           case 200:
-            onSuccess(xhr.response);
+            onLoad(xhr.response);
             break;
           case 400:
             onError('Неверный запрос');
@@ -34,13 +34,13 @@
       xhr.addEventListener('timeout', function () {
         onError('Запрос не успел выполнится за ' + xhr.timeout + 'мс');
       });
-      xhr.timeout = 1000;
+      xhr.timeout = 10000;
 
       xhr.open('GET', url);
       xhr.send();
     },
     // Отправка данных на сервер
-    saveData: function (data, onSuccess, onError) {
+    saveData: function (data, onLoad, onError) {
       var url = 'https://js.dump.academy/kekstagram';
 
       var xhr = new XMLHttpRequest();
@@ -49,7 +49,7 @@
       xhr.addEventListener('load', function () {
         switch (xhr.status) {
           case 200:
-            onSuccess(xhr.response);
+            onLoad(xhr.response);
             break;
           case 400:
             onError('Неверный запрос');
@@ -72,7 +72,7 @@
       xhr.addEventListener('timeout', function () {
         onError('Запрос не успел выполнится за ' + xhr.timeout + 'мс');
       });
-      xhr.timeout = 1000;
+      xhr.timeout = 10000;
 
       xhr.open('POST', url);
       xhr.send(data);

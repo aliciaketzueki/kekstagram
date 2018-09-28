@@ -17,6 +17,7 @@
   window.upload = {
     // 1. Форма редактирования
     changeUploadFile: function (element, img, scale, pin, depth) {
+      // Нажатие на ESC
       var onEscPress = function (evt) {
         var target = evt.target;
         if (target.classList.contains('text__hashtags') || target.classList.contains('text__description')) {
