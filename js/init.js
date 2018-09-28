@@ -2,13 +2,13 @@
 // 1.8. Функция инициализации
 (function () {
   // модуль pictures.js
-  var pictureIndex = window.util.createArr(1, 26);
+//  var pictureIndex = window.util.createArr(1, 26);
   var photos = [];
-  var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
-  var pictureDestination = document.querySelector('.pictures');
 
-  window.pictures.createPhotos(pictureIndex, photos);
-  window.pictures.addElements(photos, pictureDestination, pictureTemplate);
+
+//  window.pictures.createPhotos(pictureIndex, photos);
+
+  window.backend.uploadData(window.pictures.successHandler, window.pictures.errorHandler);
   // модуль bigPhoto.js
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureComments = bigPicture.querySelector('.social__comments');
@@ -37,6 +37,5 @@
   // модуль form.js
   window.form.checkValidityHashtags(imgUpload);
   window.form.checkValidityText(imgUpload);
-
-  window.backend.saveData(new FormData(window.form.formData), window.form.submitHandler, window.form.errorHandler);
+  window.form.submitForm();
 })();

@@ -21,11 +21,11 @@
     return comments;
   };
   // Копирование шаблона маленькой фотографии и изменение ее свойств
-  var createDomElements = function (arr, template) {
+  var createDomElements = function (photos, template) {
     var pictureItem = template.cloneNode(true);
-    pictureItem.querySelector('.picture__img').src = arr.url;
-    pictureItem.querySelector('.picture__likes').textContent = arr.likes;
-    pictureItem.querySelector('.picture__comments').textContent = arr.comments.length;
+    pictureItem.querySelector('.picture__img').src = photos.url;
+    pictureItem.querySelector('.picture__likes').textContent = photos.likes;
+    pictureItem.querySelector('.picture__comments').textContent = photos.comments.length;
     return pictureItem;
   };
 
@@ -44,12 +44,18 @@
       return arr;
     },
     // Добавление созданных DOM-элементов маленьких фото в разметку
-    addElements: function (elements, destination, template) {
+    successHandler: function (photos) {
+      var pictureDestination = document.querySelector('.pictures');
+      var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
       var fragment = document.createDocumentFragment();
-      for (var j = 0; j < elements.length; j++) {
-        fragment.appendChild(createDomElements(elements[j], template));
+      for (var j = 0; j < photos.length; j++) {
+        fragment.appendChild(createDomElements(photos[j], pictureTemplate));
       }
-      destination.appendChild(fragment);
+      pictureDestination.appendChild(fragment);
+    },
+    // Ошибка добавления
+    errorHandler: function () {
+      
     }
   };
 })();
