@@ -15,19 +15,16 @@
     window.const.IMAGE_SIZE_DEFAULT = window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX;
   };
   window.upload = {
-    // Форма редактирования
+    // 1. Форма редактирования
     changeUploadFile: function (element, img, scale, pin, depth) {
-      // Нажатие на ESC
       var onEscPress = function (evt) {
         var target = evt.target;
         if (target.classList.contains('text__hashtags') || target.classList.contains('text__description')) {
           evt.stopPropagation();
-        } else {
-          if (evt.keyCode === window.const.ESC_KEYDOWN) {
+        } else if (evt.keyCode === window.const.ESC_KEYDOWN) {
             element.classList.add('hidden');
             resetUploadSettings(img, scale, pin, depth);
           }
-        }
       };
       // Показ формы редактирования
       var openUploadFileOverlay = function (element) {
@@ -47,7 +44,7 @@
       openUploadFileOverlay(element);
       closeUploadFileOverlay(element, img, scale, pin, depth);
     },
-    // Отправка формы  
+    // 2. Отправка формы  
     submitForm: function (img, scale, pin, depth) {
       form.addEventListener('submit', function (evt) {
         evt.preventDefault();

@@ -9,13 +9,10 @@
 //  window.pictures.createPhotos(pictureIndex, photos);
 
   window.backend.uploadData(window.pictures.successHandler, window.pictures.errorHandler);
-  // модуль bigPhoto.js
-  var bigPicture = document.querySelector('.big-picture');
-  var bigPictureComments = bigPicture.querySelector('.social__comments');
-  var bigPictureComment = bigPictureComments.querySelector('.social__comment');
 
-  window.bigPhoto.openBigPhoto(bigPicture, photos, bigPictureComments, bigPictureComment);
-  window.bigPhoto.closeBigPhoto(bigPicture, bigPictureComments);
+  // модуль bigPhoto.js
+  window.bigPhoto.changeBigPhoto(photos);
+
   // модуль upload.js
   var imgUpload = document.querySelector('.img-upload__overlay');
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
@@ -25,6 +22,7 @@
 
   window.upload.changeUploadFile(imgUpload, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
   window.upload.submitForm(imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
+
   // модуль effects.js
   var effectsArr = [];
 
