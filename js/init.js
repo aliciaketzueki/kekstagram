@@ -2,13 +2,11 @@
 // 1.8. Функция инициализации
 (function () {
   // модуль pictures.js
-  var photos = window.pictures.photos;
-  console.log(photos);
-
   window.pictures.createNewPhotosArr();
-
+  console.log(window.pictures.photos);
+  console.log(window.pictures.photos[0]);
   // модуль bigPhoto.js
-  window.bigPhoto.changeBigPhoto(photos);
+  window.bigPhoto.changeBigPhoto(window.pictures.photos);
 
   // модуль upload.js
   var imgUpload = document.querySelector('.img-upload__overlay');

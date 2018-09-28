@@ -1,6 +1,7 @@
 'use strict';
 (function () {
   var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+  /*
   var pictureIndex = window.util.createArr(1, 26);
   // Генерация случайного URL у фотографий
   var renderPictureIndex = function () {
@@ -22,6 +23,7 @@
     }
     return comments;
   };
+  */
   // Копирование шаблона маленькой фотографии и изменение ее свойств
   var createDomElements = function (arr) {
     var pictureItem = pictureTemplate.cloneNode(true);
@@ -30,19 +32,23 @@
     pictureItem.querySelector('.picture__comments').textContent = arr.comments.length;
     return pictureItem;
   };
+  // Массив фотографий
+  var Photos = function (url, likes, comments, description) {
+    this.url = url;
+    this.likes = likes;
+    this.comments = comments;
+    this.description = description;
+  };
   // Создание массива объектов фотографий
   var createPhotos = function (arr) {
+    var photo = {};
     for (var i = 0; i < arr.length; i++) {
-      var photo = {
-        url: arr[i].url,
-        likes: arr[i].likes,
-        comments: arr[i].comments,
-        description: arr[i].description
-      };
-      arr[i] = photo;
+      photo[i] = new Photos(arr[i].url, arr[i].likes, arr[i].comments, arr[i].description);
+      window.pictures.photos.push(photo[i]);
     }
-    return arr;
-  }
+    return window.pictures.photos;
+  };
+
   window.pictures = {
     photos: [],
     // Создание массива фотографий
@@ -54,8 +60,8 @@
         for (var j = 0; j < arr.length; j++) {
           fragment.appendChild(createDomElements(arr[j]));
         }
+        createPhotos(arr);
         pictureDestination.appendChild(fragment);
-        window.pictures.photos.push(createPhotos(arr));
       };
       // Ошибка добавления
       var errorHandler = function (errorMessage) {

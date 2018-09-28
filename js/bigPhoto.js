@@ -26,15 +26,16 @@
     }
     bigPictureComments.appendChild(fragment);
   };
+
   window.bigPhoto = {
     // 1. Большая фотография
     changeBigPhoto: function (arr) {
       // Нажатие на ESC
       var onEscPress = function (evt) {
         if (evt.keyCode === window.const.ESC_KEYDOWN) {
-            bigPicture.classList.add('hidden');
-          }
-        };
+          bigPicture.classList.add('hidden');
+        }
+      };
       // Открытие большой фотографии
       var openBigPhoto = function (arr) {
         var bigPictureArr = document.querySelectorAll('.picture');
@@ -69,6 +70,6 @@
 
       openBigPhoto(arr);
       closeBigPhoto();
-    },
+    }
   };
 })();
