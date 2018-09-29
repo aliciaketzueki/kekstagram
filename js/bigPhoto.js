@@ -30,10 +30,12 @@
   window.bigPhoto = {
     // 1. Большая фотография
     changeBigPhoto: function (arr) {
+      var body = document.querySelector('body');
       // Нажатие на ESC
       var onEscPress = function (evt) {
         if (evt.keyCode === window.const.ESC_KEYDOWN) {
           bigPicture.classList.add('hidden');
+          body.classList.remove('modal-open');
         }
       };
       // Открытие большой фотографии
@@ -47,13 +49,13 @@
             }
           }
           bigPicture.classList.remove('hidden');
+          body.classList.add('modal-open');
           document.addEventListener('keydown', onEscPress);
         };
 
         for (var i = 0; i < bigPictureArr.length; i++) {
           bigPictureArr[i].addEventListener('click', onLittlePicturePress);
         }
-
         bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
         bigPicture.querySelector('.comments-loader').classList.add('visually-hidden');
       };
@@ -63,6 +65,7 @@
 
         bigPictureCancel.addEventListener('click', function () {
           bigPicture.classList.add('hidden');
+          body.classList.remove('modal-open');
           window.util.deleteNodeElements(bigPictureComments);
           document.removeEventListener('keydown', onEscPress);
         });

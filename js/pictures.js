@@ -48,6 +48,7 @@
     }
     return newArr;
   };
+
   window.pictures = {
     // Создание массива фотографий
     createNewPhotosArr: function () {
@@ -57,12 +58,11 @@
         photos = createPhotos(arr, photos);
         var pictureDestination = document.querySelector('.pictures');
         var fragment = document.createDocumentFragment();
-        for (var j = 0; j < photos.length; j++) {
-          fragment.appendChild(createDomElements(photos[j]));
+        for (var j = 0; j < arr.length; j++) {
+          fragment.appendChild(createDomElements(arr[j]));
         }
         pictureDestination.appendChild(fragment);
-        console.log(photos);
-        console.log(photos.length);
+        window.bigPhoto.changeBigPhoto(photos);
       };
       // Ошибка добавления
       var errorHandler = function (errorMessage) {
