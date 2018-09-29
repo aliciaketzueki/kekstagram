@@ -23,32 +23,32 @@
         if (target.classList.contains('text__hashtags') || target.classList.contains('text__description')) {
           evt.stopPropagation();
         } else if (evt.keyCode === window.const.ESC_KEYDOWN) {
-            element.classList.add('hidden');
-            resetUploadSettings(img, scale, pin, depth);
-          }
+          element.classList.add('hidden');
+          resetUploadSettings(img, scale, pin, depth);
+        }
       };
       // Показ формы редактирования
-      var openUploadFileOverlay = function (element) {
+      var openUploadFileOverlay = function () {
         uploadFile.addEventListener('change', function () {
           element.classList.remove('hidden');
           document.addEventListener('keydown', onEscPress);
         });
       };
       // Закрытие формы редактирования
-      var closeUploadFileOverlay = function (element, img, scale, pin, depth) {
+      var closeUploadFileOverlay = function () {
         imgUploadCancel.addEventListener('click', function () {
           element.classList.add('hidden');
           resetUploadSettings(img, scale, pin, depth);
           document.removeEventListener('keydown', onEscPress);
         });
       };
-      openUploadFileOverlay(element);
-      closeUploadFileOverlay(element, img, scale, pin, depth);
+      openUploadFileOverlay();
+      closeUploadFileOverlay();
     },
-    // 2. Отправка формы  
+    // 2. Отправка формы
     submitForm: function (img, scale, pin, depth) {
-      form.addEventListener('submit', function (evt) {
-        evt.preventDefault();
+      form.addEventListener('submit', function (evnt) {
+        evnt.preventDefault();
         // Успешный сценарий отправки формы
         var submitHandler = function () {
           imgUpload.classList.add('hidden');
@@ -59,12 +59,13 @@
           resetUploadSettings(img, scale, pin, depth);
 
           var successButton = successBlock.querySelector('.success__button');
+
           successButton.addEventListener('click', function () {
             main.removeChild(successBlock);
           });
 
           document.addEventListener('keydown', function (evt) {
-            if (evt.keyCode === window.const.ESC_KEYDOWN) {
+            if (main.lastChild === successBlock && evt.keyCode === window.const.ESC_KEYDOWN) {
               main.removeChild(successBlock);
             }
           });
@@ -92,7 +93,7 @@
           }
 
           document.addEventListener('keydown', function (evt) {
-            if (evt.keyCode === window.const.ESC_KEYDOWN) {
+            if (main.lastChild === errorBlock && evt.keyCode === window.const.ESC_KEYDOWN) {
               main.removeChild(errorBlock);
             }
           });

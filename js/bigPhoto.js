@@ -37,7 +37,7 @@
         }
       };
       // Открытие большой фотографии
-      var openBigPhoto = function (arr) {
+      var openBigPhoto = function () {
         var bigPictureArr = document.querySelectorAll('.picture');
         var onLittlePicturePress = function (evt) {
           for (var j = 0; j < arr.length; j++) {
@@ -68,7 +68,7 @@
         });
       };
 
-      openBigPhoto(arr);
+      openBigPhoto();
       closeBigPhoto();
     }
   };

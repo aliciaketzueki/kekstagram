@@ -2,9 +2,10 @@
 // 1.8. Функция инициализации
 (function () {
   // модуль pictures.js
-  window.pictures.createNewPhotosArr();
-  console.log(window.pictures.photos);
-  console.log(window.pictures.photos[0]);
+  var photos = window.pictures.createNewPhotosArr();
+  console.log(photos);
+  console.log(photos.length);
+
   // модуль bigPhoto.js
   window.bigPhoto.changeBigPhoto(window.pictures.photos);
 
@@ -29,4 +30,8 @@
   // модуль form.js
   window.form.checkValidityHashtags(imgUpload);
   window.form.checkValidityText(imgUpload);
+
+
+  console.log(effectsArr);
+  console.log(effectsArr.length);
 })();

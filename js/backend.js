@@ -4,7 +4,7 @@
     // Загрузка данных с сервера
     uploadData: function (onLoad, onError) {
       var url = 'https://js.dump.academy/kekstagram/data';
-      
+
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
 
@@ -65,7 +65,7 @@
         }
       });
 
-      xhr.addEventListener('error', function() {
+      xhr.addEventListener('error', function () {
         onError('Произошла ошибка соединения');
       });
 

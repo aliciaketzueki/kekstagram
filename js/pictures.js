@@ -40,31 +40,32 @@
     this.description = description;
   };
   // Создание массива объектов фотографий
-  var createPhotos = function (arr) {
+  var createPhotos = function (arr, newArr) {
     var photo = {};
     for (var i = 0; i < arr.length; i++) {
       photo[i] = new Photos(arr[i].url, arr[i].likes, arr[i].comments, arr[i].description);
-      window.pictures.photos.push(photo[i]);
+      newArr.push(photo[i]);
     }
-    return window.pictures.photos;
+    return newArr;
   };
-
   window.pictures = {
-    photos: [],
     // Создание массива фотографий
     createNewPhotosArr: function () {
+      var photos = [];
       // Добавление маленьких фото в разметку
       var successHandler = function (arr) {
+        photos = createPhotos(arr, photos);
+        console.log(photos);
         var pictureDestination = document.querySelector('.pictures');
         var fragment = document.createDocumentFragment();
-        for (var j = 0; j < arr.length; j++) {
-          fragment.appendChild(createDomElements(arr[j]));
+        for (var j = 0; j < photos.length; j++) {
+          fragment.appendChild(createDomElements(photos[j]));
         }
-        createPhotos(arr);
         pictureDestination.appendChild(fragment);
       };
       // Ошибка добавления
       var errorHandler = function (errorMessage) {
+        // что-нибудь другое тут придумать
         var node = document.createElement('div');
         node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
         node.style.position = 'absolute';
@@ -77,6 +78,7 @@
       };
 
       window.backend.uploadData(successHandler, errorHandler);
+      return photos;
     }
   };
 })();
