@@ -1,5 +1,6 @@
 'use strict';
 (function () {
+
   window.backend = {
     // Загрузка данных с сервера
     uploadData: function (onLoad, onError) {
@@ -10,16 +11,16 @@
 
       xhr.addEventListener('load', function () {
         switch (xhr.status) {
-          case 200:
+          case window.const.SUCCESS_CODE:
             onLoad(xhr.response);
             break;
-          case 400:
+          case window.const.BAD_REQUEST_ERROR_CODE:
             onError('Неверный запрос');
             break;
-          case 401:
+          case window.const.UNAUTHORIZED_ERROR_CODE:
             onError('Пользователь не авторизован');
             break;
-          case 404:
+          case window.const.NOT_FOUND_ERROR_CODE:
             onError('Ничего не найдено');
             break;
           default:
@@ -48,16 +49,16 @@
 
       xhr.addEventListener('load', function () {
         switch (xhr.status) {
-          case 200:
+          case window.const.SUCCESS_CODE:
             onLoad(xhr.response);
             break;
-          case 400:
+          case window.const.BAD_REQUEST_ERROR_CODE:
             onError('Неверный запрос');
             break;
-          case 401:
+          case window.const.UNAUTHORIZED_ERROR_CODE:
             onError('Пользователь не авторизован');
             break;
-          case 404:
+          case window.const.NOT_FOUND_ERROR_CODE:
             onError('Ничего не найдено');
             break;
           default:

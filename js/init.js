@@ -30,8 +30,4 @@
   // модуль form.js
   window.form.checkValidityHashtags(imgUpload);
   window.form.checkValidityText(imgUpload);
-
-
-  console.log(effectsArr);
-  console.log(effectsArr.length);
 })();

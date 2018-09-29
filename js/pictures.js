@@ -55,13 +55,14 @@
       // Добавление маленьких фото в разметку
       var successHandler = function (arr) {
         photos = createPhotos(arr, photos);
-        console.log(photos);
         var pictureDestination = document.querySelector('.pictures');
         var fragment = document.createDocumentFragment();
         for (var j = 0; j < photos.length; j++) {
           fragment.appendChild(createDomElements(photos[j]));
         }
         pictureDestination.appendChild(fragment);
+        console.log(photos);
+        console.log(photos.length);
       };
       // Ошибка добавления
       var errorHandler = function (errorMessage) {
