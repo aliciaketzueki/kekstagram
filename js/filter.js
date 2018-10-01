@@ -7,13 +7,13 @@
   var buttonDiscussed = imgFilters.querySelector('#filter-discussed');
   var arr = [];
   // Нажатие на кнопку Популярных Фото
-  var onButtonPopular = function () {
+  var onButtonPopular = window.util.debounce(function () {
     var photos = arr.slice(0);
     window.pictures.appendDomElements(photos);
     window.bigPhoto.changeBigPhoto(photos);
-  };
+  });
   // Нажатие на кнопку Новых Фото
-  var onButtonNew = function () {
+  var onButtonNew = window.util.debounce(function () {
     var photos = arr.slice(0);
     photos.sort(window.util.compareRandom);
     var newPhotos = [];
@@ -22,16 +22,16 @@
     }
     window.pictures.appendDomElements(newPhotos);
     window.bigPhoto.changeBigPhoto(newPhotos);
-  };
+  });
   // Нажатие на кнопку Обсуждаемых Фото
-  var onButtonDiscussed = function () {
+  var onButtonDiscussed = window.util.debounce(function () {
     var photos = arr.slice(0);
     photos.sort(function (first, second) {
       return second.comments.length - first.comments.length;
     });
     window.pictures.appendDomElements(photos);
     window.bigPhoto.changeBigPhoto(photos);
-  };
+  });
 
   window.filter = {
     // 1. Успешное добавление фото в разметку
