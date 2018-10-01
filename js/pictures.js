@@ -17,7 +17,7 @@
       if (it.parentNode.contains(it)) {
         it.parentNode.removeChild(it);
       }
-    })
+    });
   };
 
   window.pictures = {

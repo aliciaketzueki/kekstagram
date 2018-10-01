@@ -3,12 +3,17 @@
   var bigPicture = document.querySelector('.big-picture');
   var bigPictureComments = bigPicture.querySelector('.social__comments');
   var bigPictureComment = bigPictureComments.querySelector('.social__comment');
+  var commentsLoader = bigPicture.querySelector('.comments-loader');
+  var commentsCount = bigPicture.querySelector('.social__comment-count');
+  var takeNumber = window.const.PHOTOS_COMMENTS_VIEW;
   // Добавление URL, likes, описания, comments.length в разметку большой фотографии
   var getBigPictureProperties = function (j, arr) {
     bigPicture.querySelector('.big-picture__img').querySelector('img').src = arr[j].url;
     bigPicture.querySelector('.likes-count').textContent = arr[j].likes;
     bigPicture.querySelector('.social__caption').textContent = arr[j].description;
-    bigPicture.querySelector('.comments-count').textContent = arr[j].comments.length;
+
+    takeNumber = arr[j].comments.length > window.const.PHOTOS_COMMENTS_VIEW ? window.const.PHOTOS_COMMENTS_VIEW : arr[j].comments.length;
+    commentsCount.textContent = takeNumber + ' из ' + arr[j].comments.length + ' комментариев';
   };
   // Создание DOM-элементов для комментариев
   var getBigPictureComments = function (arrComments) {
@@ -17,38 +22,50 @@
     photosComment.querySelector('.social__text').textContent = arrComments;
     return photosComment;
   };
-
   // Добавление DOM-элементов в разметку
-  var addComments = function (j, arr) {
-    window.util.deleteNodeElements(bigPictureComments);
+  var appendDomElements = function (arr, start, end, j) {
     var fragment = document.createDocumentFragment();
-    var takeNumber = arr[j].comments.length > window.const.PHOTOS_COMMENTS_VIEW ? window.const.PHOTOS_COMMENTS_VIEW : arr[j].comments.length;
-    for (var k = 0; k < takeNumber; k++) {
+    for (var k = start; k < end; k++) {
       fragment.appendChild(getBigPictureComments(arr[j].comments[k]));
     }
     bigPictureComments.appendChild(fragment);
+  };
+  // Добавление комментариев
+  var addComments = function (j, arr) {
+    window.util.deleteNodeElements(bigPictureComments);
 
-    var commentsLoader = bigPicture.querySelector('.comments-loader');
+    // загрузка комментариев при открытии фото
     if (arr[j].comments.length <= window.const.PHOTOS_COMMENTS_VIEW) {
       commentsLoader.classList.add('visually-hidden');
+      appendDomElements(arr, 0, arr[j].comments.length, j);
     } else {
       commentsLoader.classList.remove('visually-hidden');
+      appendDomElements(arr, 0, window.const.PHOTOS_COMMENTS_VIEW, j);
     }
+
     // клик на "загрузить еще (комментариев)"
     commentsLoader.addEventListener('click', function () {
       var newTakeNumber = takeNumber + window.const.PHOTOS_COMMENTS_VIEW;
-      console.log(takeNumber);
+      // скрытие кнопки, когда все комментарии загружены
       if (newTakeNumber > arr[j].comments.length) {
         newTakeNumber = arr[j].comments.length;
         commentsLoader.classList.add('visually-hidden');
       }
-//      if (newTakeNumber <= arr[j].comments.length) {
-        for (var k = takeNumber; k < newTakeNumber; k++) {
-          fragment.appendChild(getBigPictureComments(arr[j].comments[k]));
-        }
-        bigPictureComments.appendChild(fragment);
-        takeNumber += window.const.PHOTOS_COMMENTS_VIEW;
-//      }
+      // добавление по 5 комментариев
+      var fragment = document.createDocumentFragment();
+      for (var k = takeNumber; k < newTakeNumber; k++) {
+        fragment.appendChild(getBigPictureComments(arr[j].comments[k]));
+      }
+      bigPictureComments.appendChild(fragment);
+      takeNumber += window.const.PHOTOS_COMMENTS_VIEW;
+
+      // изменение счетчика комментариев
+      if (takeNumber <= arr[j].comments.length) {
+        commentsCount.textContent = takeNumber + ' из ' + arr[j].comments.length + ' комментариев';
+      } else {
+        takeNumber = arr[j].comments.length;
+        commentsCount.textContent = takeNumber + ' из ' + arr[j].comments.length + ' комментариев';
+      }
     });
   };
 
@@ -60,6 +77,7 @@
       // Нажатие на ESC
       var onEscPress = function (evt) {
         if (evt.keyCode === window.const.ESC_KEYDOWN) {
+          window.util.deleteNodeElements(bigPictureComments);
           bigPicture.classList.add('hidden');
           body.classList.remove('modal-open');
         }
@@ -81,19 +99,15 @@
         bigPictureArr.forEach(function (it) {
           it.addEventListener('click', onLittlePicturePress);
         });
-
-        // bigPicture.querySelector('.social__comment-count').classList.add('visually-hidden');
       };
       // Закрытие большой фотографии
       var closeBigPhoto = function () {
         var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
-
         bigPictureCancel.addEventListener('click', function () {
           bigPicture.classList.add('hidden');
           body.classList.remove('modal-open');
           window.util.deleteNodeElements(bigPictureComments);
           document.removeEventListener('keydown', onEscPress);
-          takeNumber = null;
         });
       };
 
