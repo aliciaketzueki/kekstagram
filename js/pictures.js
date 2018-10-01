@@ -1,10 +1,13 @@
 'use strict';
 (function () {
+  var pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
+  /*
+  var pictureIndex = window.util.createArr(1, 26);
   // Генерация случайного URL у фотографий
-  var renderPictureIndex = function (arr) {
-    var rand = window.util.getRandomArbitary(1, arr.length - 1);
-    var randomElement = arr[rand];
-    arr.splice(rand, 1);
+  var renderPictureIndex = function () {
+    var rand = window.util.getRandomArbitary(1, pictureIndex.length - 1);
+    var randomElement = pictureIndex[rand];
+    pictureIndex.splice(rand, 1);
     return randomElement;
   };
   // Cоздание случайного количества комментариев к фото
@@ -20,36 +23,63 @@
     }
     return comments;
   };
+  */
   // Копирование шаблона маленькой фотографии и изменение ее свойств
-  var createDomElements = function (arr, template) {
-    var pictureItem = template.cloneNode(true);
+  var createDomElements = function (arr) {
+    var pictureItem = pictureTemplate.cloneNode(true);
     pictureItem.querySelector('.picture__img').src = arr.url;
     pictureItem.querySelector('.picture__likes').textContent = arr.likes;
     pictureItem.querySelector('.picture__comments').textContent = arr.comments.length;
     return pictureItem;
   };
+  // Массив фотографий
+  var Photos = function (url, likes, comments, description) {
+    this.url = url;
+    this.likes = likes;
+    this.comments = comments;
+    this.description = description;
+  };
+  // Создание массива объектов фотографий
+  var createPhotos = function (arr, newArr) {
+    var photo = {};
+    for (var i = 0; i < arr.length; i++) {
+      photo[i] = new Photos(arr[i].url, arr[i].likes, arr[i].comments, arr[i].description);
+      newArr.push(photo[i]);
+    }
+    return newArr;
+  };
 
   window.pictures = {
-    // Создание массива объектов фотографий с полученными ранее свойствами
-    createPhotos: function (element, arr) {
-      for (var i = 0; i < 25; i++) {
-        var photo = {
-          url: 'photos/' + renderPictureIndex(element) + '.jpg',
-          likes: window.util.getRandomArbitary(window.const.LIKES_AMOUNT_MIN, window.const.LIKES_AMOUNT_MAX),
-          comments: createComments(),
-          description: window.util.selectRandomElement(window.const.DESCRIPTION_ARR)
-        };
-        arr[i] = photo;
-      }
-      return arr;
-    },
-    // Добавление созданных DOM-элементов маленьких фото в разметку
-    addElements: function (elements, destination, template) {
-      var fragment = document.createDocumentFragment();
-      for (var j = 0; j < elements.length; j++) {
-        fragment.appendChild(createDomElements(elements[j], template));
-      }
-      destination.appendChild(fragment);
+    // Создание массива фотографий
+    createNewPhotosArr: function () {
+      var photos = [];
+      // Добавление маленьких фото в разметку
+      var successHandler = function (arr) {
+        photos = createPhotos(arr, photos);
+        var pictureDestination = document.querySelector('.pictures');
+        var fragment = document.createDocumentFragment();
+        for (var j = 0; j < arr.length; j++) {
+          fragment.appendChild(createDomElements(arr[j]));
+        }
+        pictureDestination.appendChild(fragment);
+        window.bigPhoto.changeBigPhoto(photos);
+      };
+      // Ошибка добавления
+      var errorHandler = function (errorMessage) {
+        // что-нибудь другое тут придумать
+        var node = document.createElement('div');
+        node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+        node.style.position = 'absolute';
+        node.style.left = 0;
+        node.style.right = 0;
+        node.style.fontSize = '30px';
+
+        node.textContent = errorMessage;
+        document.body.insertAdjacentElement('afterbegin', node);
+      };
+
+      window.backend.uploadData(successHandler, errorHandler);
+      return photos;
     }
   };
 })();
