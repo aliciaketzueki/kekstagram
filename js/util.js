@@ -39,5 +39,9 @@
       }
       return repeat;
     },
+    // Рандом без повторов
+    compareRandom: function () {
+      return Math.random() - 0.5;
+    },
   };
 })();

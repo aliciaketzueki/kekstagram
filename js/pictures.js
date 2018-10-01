@@ -19,7 +19,7 @@
       }
     })
   };
-  var arr = [];
+
   window.pictures = {
     // Добавление DOM-элементов
     appendDomElements: function (arr) {
@@ -34,27 +34,7 @@
     },
     // Создание массива фотографий
     createNewPhotosArr: function () {
-      // Добавление маленьких фото в разметку
-      var successHandler = function (data) {
-        arr = data;
-        window.pictures.appendDomElements(arr);
-        window.bigPhoto.changeBigPhoto(arr);
-      };
-      // Ошибка добавления
-      var errorHandler = function (errorMessage) {
-        // что-нибудь другое тут придумать
-        var node = document.createElement('div');
-        node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
-        node.style.position = 'absolute';
-        node.style.left = 0;
-        node.style.right = 0;
-        node.style.fontSize = '30px';
-
-        node.textContent = errorMessage;
-        document.body.insertAdjacentElement('afterbegin', node);
-      };
-
-      window.backend.uploadData(successHandler, errorHandler);
+      window.backend.uploadData(window.filter.successHandler, window.filter.errorHandler);
     }
   };
 })();
