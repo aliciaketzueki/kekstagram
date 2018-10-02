@@ -33,18 +33,19 @@
     var number = 0;
     // загрузка комментариев при открытии фото
     var func = function () {
-      if (arr[j].comments.length <= window.const.PHOTOS_COMMENTS_VIEW || (window.const.PHOTOS_COMMENTS_VIEW + number) >= arr[j].comments.length) {
+      if (arr[j].comments.length <= window.const.PHOTOS_COMMENTS_VIEW + number) {
         appendDomElements(arr, j, number, arr[j].comments.length);
         commentsLoader.classList.add('visually-hidden');
       } else {
         appendDomElements(arr, j, number, window.const.PHOTOS_COMMENTS_VIEW + number);
         commentsLoader.classList.remove('visually-hidden');
       }
+      number += window.const.PHOTOS_COMMENTS_VIEW;
     };
     func();
     // клик на "загрузить еще (комментариев)"
     commentsLoader.addEventListener('click', function () {
-      number += window.const.PHOTOS_COMMENTS_VIEW;
+      
       func();
     });
   };
