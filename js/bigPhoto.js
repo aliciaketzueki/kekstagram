@@ -27,11 +27,12 @@
     bigPictureComments.appendChild(fragment);
     commentsCount.textContent = end + ' из ' + arr[j].comments.length + ' комментариев';
   };
+  // Функция
+
   // Добавление комментариев
   var addComments = function (j, arr) {
     window.util.deleteNodeElements(bigPictureComments);
     var number = 0;
-    // загрузка комментариев при открытии фото
     var func = function () {
       if (arr[j].comments.length <= window.const.PHOTOS_COMMENTS_VIEW + number) {
         appendDomElements(arr, j, number, arr[j].comments.length);
@@ -40,13 +41,13 @@
         appendDomElements(arr, j, number, window.const.PHOTOS_COMMENTS_VIEW + number);
         commentsLoader.classList.remove('visually-hidden');
       }
-      number += window.const.PHOTOS_COMMENTS_VIEW;
     };
     func();
     // клик на "загрузить еще (комментариев)"
+    // commentsLoader.removeEventListener('click', func);
     commentsLoader.addEventListener('click', function () {
-      
-      func();
+      number += window.const.PHOTOS_COMMENTS_VIEW;
+      func(); // при клике на новое фото это событие начинает срабатывать 2++ раз
     });
   };
 
