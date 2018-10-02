@@ -3,8 +3,6 @@
 (function () {
   // модуль pictures.js
   window.pictures.createNewPhotosArr();
-  // модуль bigPhoto.js
-
 
   // модуль upload.js
   var imgUpload = document.querySelector('.img-upload__overlay');
@@ -27,4 +25,7 @@
   // модуль form.js
   window.form.checkValidityHashtags(imgUpload);
   window.form.checkValidityText(imgUpload);
+
+  // модуль avatar.js
+//  window.avatar.loadPreview(imgUploadPreview);
 })();

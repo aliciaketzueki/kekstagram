@@ -9,7 +9,7 @@
   var getBigPictureProperties = function (j, arr) {
     bigPicture.querySelector('.big-picture__img').querySelector('img').src = arr[j].url;
     bigPicture.querySelector('.likes-count').textContent = arr[j].likes;
-    bigPicture.querySelector('.social__caption').textContent = arr[j].description;
+    bigPicture.querySelector('.social__caption').textContent = window.util.selectRandomElement(window.const.DESCRIPTION_ARR);
   };
   // Создание DOM-элементов для комментариев
   var getBigPictureComments = function (arrComments) {
@@ -30,21 +30,21 @@
   // Добавление комментариев
   var addComments = function (j, arr) {
     window.util.deleteNodeElements(bigPictureComments);
-    var n = 0;
+    var number = 0;
     // загрузка комментариев при открытии фото
     var func = function () {
-      if (arr[j].comments.length <= window.const.PHOTOS_COMMENTS_VIEW || (window.const.PHOTOS_COMMENTS_VIEW + n) >= arr[j].comments.length) {
-        appendDomElements(arr, j, n, arr[j].comments.length);
+      if (arr[j].comments.length <= window.const.PHOTOS_COMMENTS_VIEW || (window.const.PHOTOS_COMMENTS_VIEW + number) >= arr[j].comments.length) {
+        appendDomElements(arr, j, number, arr[j].comments.length);
         commentsLoader.classList.add('visually-hidden');
       } else {
-        appendDomElements(arr, j, n, window.const.PHOTOS_COMMENTS_VIEW + n);
+        appendDomElements(arr, j, number, window.const.PHOTOS_COMMENTS_VIEW + number);
         commentsLoader.classList.remove('visually-hidden');
       }
     };
     func();
     // клик на "загрузить еще (комментариев)"
     commentsLoader.addEventListener('click', function () {
-      n += window.const.PHOTOS_COMMENTS_VIEW;
+      number += window.const.PHOTOS_COMMENTS_VIEW;
       func();
     });
   };
