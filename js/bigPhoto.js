@@ -64,8 +64,8 @@
       };
       // Открытие большой фотографии
       var openBigPhoto = function () {
-        // Обработчик открытия маленькой фотографии
-        var onLittlePicturePress = function (evt) {
+        // Обработчик открытия маленькой фотографии по клику
+        var onLittlePictureClick = function (evt) {
           for (var j = 0; j < arr.length; j++) {
             if (bigPictureArr[j].querySelector('img') === evt.target) {
               getBigPictureProperties(j, arr);
@@ -76,8 +76,23 @@
           body.classList.add('modal-open');
           document.addEventListener('keydown', onEscPress);
         };
+        // Открытие по нажатию
+        var onLittlePictureDown = function (evt) {
+          if (evt.keyCode === window.const.ENTER_KEYDOWN) {
+            for (var j = 0; j < arr.length; j++) {
+              if (bigPictureArr[j] === evt.target) {
+                getBigPictureProperties(j, arr);
+                addComments(j, arr);
+              }
+            }
+            bigPicture.classList.remove('hidden');
+            body.classList.add('modal-open');
+            document.addEventListener('keydown', onEscPress);
+          }
+        };
         bigPictureArr.forEach(function (it) {
-          it.addEventListener('click', onLittlePicturePress);
+          it.addEventListener('click', onLittlePictureClick);
+          it.addEventListener('keydown', onLittlePictureDown);
         });
       };
       // Закрытие большой фотографии

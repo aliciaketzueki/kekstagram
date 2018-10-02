@@ -3,6 +3,7 @@
   window.const = {
     PERCENT_MAX: 100,
     ESC_KEYDOWN: 27,
+    ENTER_KEYDOWN: 13,
     DESCRIPTION_ARR: [
       'Тестим новую камеру!',
       'Затусили с друзьями на море',
