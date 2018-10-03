@@ -25,7 +25,4 @@
   // модуль validation.js
   window.validation.checkValidityHashtags(imgUpload);
   window.validation.checkValidityText(imgUpload);
-
-  // модуль avatar.js
-  window.avatar.loadPreview(imgUploadPreview);
 })();

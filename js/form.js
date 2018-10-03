@@ -3,7 +3,8 @@
   var main = document.querySelector('main');
   var form = document.querySelector('.img-upload__form');
   var imgUpload = document.querySelector('.img-upload__overlay');
-  var uploadFile = document.getElementById('upload-file');
+  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
+  var uploadFile = document.querySelector('#upload-file');
   var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
   var templateSuccess = document.querySelector('#success').content.querySelector('.success');
   var templateError = document.querySelector('#error').content.querySelector('.error');
@@ -68,18 +69,32 @@
         } else if (evt.keyCode === window.const.ESC_KEYDOWN) {
           element.classList.add('hidden');
           resetUploadSettings(img, scale, pin, depth);
+          form.reset();
         }
       };
       // Нажатие на показ формы редактирования
       var onUploadFileClick = function () {
+        var file = uploadFile.files[0];
+        var fileName = file.name.toLowerCase();
+        var matches = window.const.FILE_IMG_TYPES.some(function (it) {
+          return fileName.endsWith(it);
+        });
+        if (matches) {
+          var reader = new FileReader();
+          reader.addEventListener('load', function () {
+            imgUploadPreview.src = reader.result;
+          });
+          reader.readAsDataURL(file);
+        }
         element.classList.remove('hidden');
         document.addEventListener('keydown', onEscDown);
       };
-      // Нажатие на закрытие формы редактирования
+      // Клик на кнопку закрытия формы редактирования
       var onUploadFileCancelClick = function () {
         element.classList.add('hidden');
         resetUploadSettings(img, scale, pin, depth);
         document.removeEventListener('keydown', onEscDown);
+        form.reset();
       };
 
       uploadFile.addEventListener('change', onUploadFileClick);
@@ -114,6 +129,7 @@
 
         var formData = new FormData(form);
         window.backend.saveData(formData, submitHandler, errorHandler);
+        form.reset();
       });
     }
   };

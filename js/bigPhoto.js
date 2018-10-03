@@ -16,49 +16,43 @@
   var onButtonCommentsClick = function (evt) {
     if (commentsLoader === evt.target) {
       index += window.const.PHOTOS_COMMENTS_VIEW;
-      window.comments.addComments(index);
+      window.comments.addComments(index, commentsLoader);
     }
+  };
+  // Клик на закрытие большой фотографии
+  var onBigPictureCancelClick = function () {
+    bigPicture.classList.add('hidden');
+    document.body.classList.remove('modal-open');
+    window.util.deleteNodeElements(bigPictureComments);
+    document.removeEventListener('keydown', onEscPress);
   };
 
   window.bigPhoto = {
     // 1. Большая фотография
     changeBigPhoto: function (arr) {
       var bigPictureArr = document.querySelectorAll('.picture');
-      // Открытие большой фотографии
-      var openBigPhoto = function () {
-        // Открытие большой фотографии по клику
-        var onLittlePictureClick = function (evt) {
-          index = 0;
-          window.comments.updateBigPhoto(arr, bigPictureArr, index, evt);
+      var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
+      // Открытие большой фотографии по клику
+      var onLittlePictureClick = function (evt) {
+        index = 0;
+        window.comments.updateBigPhoto(arr, bigPictureArr, index, commentsLoader, evt);
+        document.addEventListener('keydown', onEscPress);
+      };
+      // Открытие большой фотографии по нажатию на ENTER
+      var onLittlePictureDown = function (evt) {
+        index = 0;
+        if (evt.keyCode === window.const.ENTER_KEYDOWN) {
+          window.comments.updateBigPhoto(arr, bigPictureArr, index, commentsLoader, evt);
           document.addEventListener('keydown', onEscPress);
-        };
-        // Открытие большой фотографии по нажатию на ENTER
-        var onLittlePictureDown = function (evt) {
-          index = 0;
-          if (evt.keyCode === window.const.ENTER_KEYDOWN) {
-            window.comments.updateBigPhoto(arr, bigPictureArr, index, evt);
-            document.addEventListener('keydown', onEscPress);
-          }
-        };
-        bigPictureArr.forEach(function (it) {
-          it.addEventListener('click', onLittlePictureClick);
-          it.addEventListener('keydown', onLittlePictureDown);
-        });
-        commentsLoader.addEventListener('click', onButtonCommentsClick);
+        }
       };
+      bigPictureArr.forEach(function (it) {
+        it.addEventListener('click', onLittlePictureClick);
+        it.addEventListener('keydown', onLittlePictureDown);
+      });
+      commentsLoader.addEventListener('click', onButtonCommentsClick);
       // Закрытие большой фотографии
-      var closeBigPhoto = function () {
-        var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');
-        bigPictureCancel.addEventListener('click', function () {
-          bigPicture.classList.add('hidden');
-          document.body.classList.remove('modal-open');
-          window.util.deleteNodeElements(bigPictureComments);
-          document.removeEventListener('keydown', onEscPress);
-        });
-      };
-
-      openBigPhoto();
-      closeBigPhoto();
+      bigPictureCancel.addEventListener('click', onBigPictureCancelClick);
     },
   };
 })();
