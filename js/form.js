@@ -14,6 +14,7 @@
     scale.value = window.const.IMAGE_SIZE_MAX + '%';
     window.const.IMAGE_SIZE_DEFAULT = window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX;
   };
+
   window.form = {
     // Форма редактирования
     changeUploadFile: function (element, img, scale, pin, depth) {
@@ -27,28 +28,26 @@
           resetUploadSettings(img, scale, pin, depth);
         }
       };
-      // Показ формы редактирования
-      var openUploadFileOverlay = function () {
-        uploadFile.addEventListener('change', function () {
-          element.classList.remove('hidden');
-          document.addEventListener('keydown', onEscPress);
-        });
-      };
-      // Закрытие формы редактирования
-      var closeUploadFileOverlay = function () {
-        imgUploadCancel.addEventListener('click', function () {
-          element.classList.add('hidden');
-          resetUploadSettings(img, scale, pin, depth);
-          document.removeEventListener('keydown', onEscPress);
-        });
-      };
-      openUploadFileOverlay();
-      closeUploadFileOverlay();
+      // Нажатие на показ формы редактирования
+      var onUploadFileClick = function () {
+        element.classList.remove('hidden');
+        document.addEventListener('keydown', onEscPress);
+      }
+      // Нажатие на закрытие формы редактирования
+      var onUploadFileCancelClick = function () {
+        element.classList.add('hidden');
+        resetUploadSettings(img, scale, pin, depth);
+        document.removeEventListener('keydown', onEscPress);
+      }
+
+      uploadFile.addEventListener('change', onUploadFileClick);
+      imgUploadCancel.addEventListener('click', onUploadFileCancelClick);
     },
     // Отправка формы
     submitForm: function (img, scale, pin, depth) {
       form.addEventListener('submit', function (evnt) {
         evnt.preventDefault();
+
         // Успешный сценарий отправки формы
         var submitHandler = function () {
           imgUpload.classList.add('hidden');
@@ -59,22 +58,31 @@
           resetUploadSettings(img, scale, pin, depth);
 
           var successButton = successBlock.querySelector('.success__button');
-
-          successButton.addEventListener('click', function () {
+          // Нажатие на кнопку закрытия блока "успех"
+          var onSuccessButtonClick = function () {
             main.removeChild(successBlock);
-          });
-
-          document.addEventListener('keydown', function (evt) {
+            document.removeEventListener('keydown', onEscPress);
+            document.removeEventListener('click', onDocumentClick);
+          }
+          // Закрыть блок "успех" по нажатию на ESC
+          var onEscPress = function (evt) {
             if (main.lastChild === successBlock && evt.keyCode === window.const.ESC_KEYDOWN) {
               main.removeChild(successBlock);
+              successButton.removeEventListener('click', onSuccessButtonClick);
+              document.removeEventListener('click', onDocumentClick);
             }
-          });
-
-          document.addEventListener('click', function () {
+          };
+          // Закрыть блок "успех" по нажатию на экран
+          var onDocumentClick = function () {
             if (main.lastChild === successBlock) {
               main.removeChild(successBlock);
+              successButton.removeEventListener('click', onSuccessButtonClick);
+              document.removeEventListener('keydown', onEscPress);
             }
-          });
+          };
+          successButton.addEventListener('click', onSuccessButtonClick);
+          document.addEventListener('keydown', onEscPress);
+          document.addEventListener('click', onDocumentClick);
         };
         // Ошибка отправки формы
         var errorHandler = function (errorMessage) {
@@ -86,23 +94,39 @@
           main.appendChild(errorBlock);
 
           var errorButtons = errorBlock.querySelectorAll('.error__button');
-          for (var i = 0; i < errorButtons.length; i++) {
-            errorButtons[i].addEventListener('click', function () {
-              main.removeChild(errorBlock);
-            });
-          }
-
-          document.addEventListener('keydown', function (evt) {
+          // Закрыть блок "неудача" по нажатию на кнопки
+          var onErrorButtonsClick = function () {
+            main.removeChild(errorBlock);
+            document.removeEventListener('keydown', onEscPress);
+            document.removeEventListener('click', onDocumentClick);
+          };
+          // Закрыть блок "неудача" по нажатию на ESC
+          var onEscPress = function (evt) {
             if (main.lastChild === errorBlock && evt.keyCode === window.const.ESC_KEYDOWN) {
               main.removeChild(errorBlock);
+              errorButtons.forEach(function (it) {
+                it.removeEventListener('click', onErrorButtonsClick);
+              });
+              document.removeEventListener('click', onDocumentClick);
             }
-          });
-          document.addEventListener('click', function () {
+          };
+          // Закрыть блок "неудача" по нажатию на экран
+          var onDocumentClick = function () {
             if (main.lastChild === errorBlock) {
               main.removeChild(errorBlock);
+              errorButtons.forEach(function (it) {
+                it.removeEventListener('click', onErrorButtonsClick);
+              });
+              document.removeEventListener('keydown', onEscPress);
             }
+          };
+          errorButtons.forEach (function (it) {
+            it.addEventListener('click', onErrorButtonsClick);
           });
+          document.addEventListener('keydown', onEscPress);
+          document.addEventListener('click', onDocumentClick);
         };
+
         var formData = new FormData(form);
         window.backend.saveData(formData, submitHandler, errorHandler);
       });

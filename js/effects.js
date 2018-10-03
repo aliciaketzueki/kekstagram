@@ -108,7 +108,6 @@
               preview.style.filter = newEffectsArr[i].filter;
             }
           }
-
           document.removeEventListener('mousemove', onMouseMove);
           document.removeEventListener('mouseup', onMouseUp);
         };

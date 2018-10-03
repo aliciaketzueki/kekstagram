@@ -75,9 +75,11 @@
           if (evt.keyCode === window.const.ENTER_KEYDOWN) {
             for (var j = 0; j < arr.length; j++) {
               if (bigPictureArr[j] === evt.target) {
+                window.util.deleteNodeElements(bigPictureComments);
                 openedPhoto = arr[j];
                 getBigPictureProperties();
-                addComments();
+                index = 0;
+                addComments(index);
               }
             }
             bigPicture.classList.remove('hidden');
