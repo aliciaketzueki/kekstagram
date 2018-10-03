@@ -5,6 +5,8 @@
   var imgUpload = document.querySelector('.img-upload__overlay');
   var uploadFile = document.getElementById('upload-file');
   var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
+  var templateSuccess = document.querySelector('#success').content.querySelector('.success');
+  var templateError = document.querySelector('#error').content.querySelector('.error');
   // Сброс настроек изображения
   var resetUploadSettings = function (img, scale, pin, depth) {
     img.removeAttribute('class');
@@ -13,6 +15,18 @@
     depth.style = null;
     scale.value = window.const.IMAGE_SIZE_MAX + '%';
     window.const.IMAGE_SIZE_DEFAULT = window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX;
+  };
+  // Показать блок успеха или неудачи
+  var viewResultBlock = function (img, scale, pin, depth, template, errorMessage) {
+    imgUpload.classList.add('hidden');
+    var block = template.cloneNode(true);
+    main.appendChild(block);
+    if (block.querySelector('h2').classList.contains('error__title')) {
+      block.querySelector('.error__title').textContent = errorMessage;
+    } else {
+      resetUploadSettings(img, scale, pin, depth);
+    }
+    return block;
   };
 
   window.form = {
@@ -32,13 +46,13 @@
       var onUploadFileClick = function () {
         element.classList.remove('hidden');
         document.addEventListener('keydown', onEscPress);
-      }
+      };
       // Нажатие на закрытие формы редактирования
       var onUploadFileCancelClick = function () {
         element.classList.add('hidden');
         resetUploadSettings(img, scale, pin, depth);
         document.removeEventListener('keydown', onEscPress);
-      }
+      };
 
       uploadFile.addEventListener('change', onUploadFileClick);
       imgUploadCancel.addEventListener('click', onUploadFileCancelClick);
@@ -50,20 +64,14 @@
 
         // Успешный сценарий отправки формы
         var submitHandler = function () {
-          imgUpload.classList.add('hidden');
-
-          var templateSuccess = document.querySelector('#success').content.querySelector('.success');
-          var successBlock = templateSuccess.cloneNode(true);
-          main.appendChild(successBlock);
-          resetUploadSettings(img, scale, pin, depth);
-
+          var successBlock = viewResultBlock(img, scale, pin, depth, templateSuccess);
           var successButton = successBlock.querySelector('.success__button');
           // Нажатие на кнопку закрытия блока "успех"
           var onSuccessButtonClick = function () {
             main.removeChild(successBlock);
             document.removeEventListener('keydown', onEscPress);
             document.removeEventListener('click', onDocumentClick);
-          }
+          };
           // Закрыть блок "успех" по нажатию на ESC
           var onEscPress = function (evt) {
             if (main.lastChild === successBlock && evt.keyCode === window.const.ESC_KEYDOWN) {
@@ -86,13 +94,7 @@
         };
         // Ошибка отправки формы
         var errorHandler = function (errorMessage) {
-          imgUpload.classList.add('hidden');
-
-          var templateError = document.querySelector('#error').content.querySelector('.error');
-          var errorBlock = templateError.cloneNode(true);
-          errorBlock.querySelector('.error__title').textContent = errorMessage;
-          main.appendChild(errorBlock);
-
+          var errorBlock = viewResultBlock(img, scale, pin, depth, templateError, errorMessage);
           var errorButtons = errorBlock.querySelectorAll('.error__button');
           // Закрыть блок "неудача" по нажатию на кнопки
           var onErrorButtonsClick = function () {
@@ -120,7 +122,7 @@
               document.removeEventListener('keydown', onEscPress);
             }
           };
-          errorButtons.forEach (function (it) {
+          errorButtons.forEach(function (it) {
             it.addEventListener('click', onErrorButtonsClick);
           });
           document.addEventListener('keydown', onEscPress);
