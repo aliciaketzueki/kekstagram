@@ -7,6 +7,8 @@
   var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
   var templateSuccess = document.querySelector('#success').content.querySelector('.success');
   var templateError = document.querySelector('#error').content.querySelector('.error');
+  var resultBlock;
+  var buttons;
   // Сброс настроек изображения
   var resetUploadSettings = function (img, scale, pin, depth) {
     img.removeAttribute('class');
@@ -28,12 +30,38 @@
     }
     return block;
   };
+  // Закрыть блок результата по нажатию на кнопку(и)
+  var onButtonsClick = function () {
+    main.removeChild(resultBlock);
+    document.removeEventListener('keydown', onEscPress);
+    document.removeEventListener('click', onDocumentClick);
+  };
+  // Закрыть блок результата по нажатию на ESC
+  var onEscPress = function (evt) {
+    if (main.lastChild === resultBlock && evt.keyCode === window.const.ESC_KEYDOWN) {
+      main.removeChild(resultBlock);
+      buttons.forEach(function (it) {
+        it.removeEventListener('click', onButtonsClick);
+      });
+      document.removeEventListener('click', onDocumentClick);
+    }
+  };
+  // Закрыть блок результата по нажатию на экран
+  var onDocumentClick = function () {
+    if (main.lastChild === resultBlock) {
+      main.removeChild(resultBlock);
+      buttons.forEach(function (it) {
+        it.removeEventListener('click', onButtonsClick);
+      });
+      document.removeEventListener('keydown', onEscPress);
+    }
+  };
 
   window.form = {
     // Форма редактирования
     changeUploadFile: function (element, img, scale, pin, depth) {
       // Нажатие на ESC
-      var onEscPress = function (evt) {
+      var onEscDown = function (evt) {
         var target = evt.target;
         if (target.classList.contains('text__hashtags') || target.classList.contains('text__description')) {
           evt.stopPropagation();
@@ -45,13 +73,13 @@
       // Нажатие на показ формы редактирования
       var onUploadFileClick = function () {
         element.classList.remove('hidden');
-        document.addEventListener('keydown', onEscPress);
+        document.addEventListener('keydown', onEscDown);
       };
       // Нажатие на закрытие формы редактирования
       var onUploadFileCancelClick = function () {
         element.classList.add('hidden');
         resetUploadSettings(img, scale, pin, depth);
-        document.removeEventListener('keydown', onEscPress);
+        document.removeEventListener('keydown', onEscDown);
       };
 
       uploadFile.addEventListener('change', onUploadFileClick);
@@ -61,69 +89,24 @@
     submitForm: function (img, scale, pin, depth) {
       form.addEventListener('submit', function (evnt) {
         evnt.preventDefault();
-
         // Успешный сценарий отправки формы
         var submitHandler = function () {
-          var successBlock = viewResultBlock(img, scale, pin, depth, templateSuccess);
-          var successButton = successBlock.querySelector('.success__button');
-          // Нажатие на кнопку закрытия блока "успех"
-          var onSuccessButtonClick = function () {
-            main.removeChild(successBlock);
-            document.removeEventListener('keydown', onEscPress);
-            document.removeEventListener('click', onDocumentClick);
-          };
-          // Закрыть блок "успех" по нажатию на ESC
-          var onEscPress = function (evt) {
-            if (main.lastChild === successBlock && evt.keyCode === window.const.ESC_KEYDOWN) {
-              main.removeChild(successBlock);
-              successButton.removeEventListener('click', onSuccessButtonClick);
-              document.removeEventListener('click', onDocumentClick);
-            }
-          };
-          // Закрыть блок "успех" по нажатию на экран
-          var onDocumentClick = function () {
-            if (main.lastChild === successBlock) {
-              main.removeChild(successBlock);
-              successButton.removeEventListener('click', onSuccessButtonClick);
-              document.removeEventListener('keydown', onEscPress);
-            }
-          };
-          successButton.addEventListener('click', onSuccessButtonClick);
+          resultBlock = viewResultBlock(img, scale, pin, depth, templateSuccess);
+          buttons = resultBlock.querySelectorAll('.success__button');
+          
+          buttons.forEach(function (it) {
+            it.addEventListener('click', onButtonsClick);
+          });
           document.addEventListener('keydown', onEscPress);
           document.addEventListener('click', onDocumentClick);
         };
         // Ошибка отправки формы
         var errorHandler = function (errorMessage) {
-          var errorBlock = viewResultBlock(img, scale, pin, depth, templateError, errorMessage);
-          var errorButtons = errorBlock.querySelectorAll('.error__button');
-          // Закрыть блок "неудача" по нажатию на кнопки
-          var onErrorButtonsClick = function () {
-            main.removeChild(errorBlock);
-            document.removeEventListener('keydown', onEscPress);
-            document.removeEventListener('click', onDocumentClick);
-          };
-          // Закрыть блок "неудача" по нажатию на ESC
-          var onEscPress = function (evt) {
-            if (main.lastChild === errorBlock && evt.keyCode === window.const.ESC_KEYDOWN) {
-              main.removeChild(errorBlock);
-              errorButtons.forEach(function (it) {
-                it.removeEventListener('click', onErrorButtonsClick);
-              });
-              document.removeEventListener('click', onDocumentClick);
-            }
-          };
-          // Закрыть блок "неудача" по нажатию на экран
-          var onDocumentClick = function () {
-            if (main.lastChild === errorBlock) {
-              main.removeChild(errorBlock);
-              errorButtons.forEach(function (it) {
-                it.removeEventListener('click', onErrorButtonsClick);
-              });
-              document.removeEventListener('keydown', onEscPress);
-            }
-          };
-          errorButtons.forEach(function (it) {
-            it.addEventListener('click', onErrorButtonsClick);
+          resultBlock = viewResultBlock(img, scale, pin, depth, templateError, errorMessage);
+          buttons = resultBlock.querySelectorAll('.error__button');
+
+          buttons.forEach(function (it) {
+            it.addEventListener('click', onButtonsClick);
           });
           document.addEventListener('keydown', onEscPress);
           document.addEventListener('click', onDocumentClick);
