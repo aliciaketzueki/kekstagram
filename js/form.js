@@ -60,7 +60,7 @@
   window.form = {
     // Форма редактирования
     changeUploadFile: function (element, img, scale, pin, depth) {
-      // Нажатие на ESC
+      // Закрыть форму редактирования по нажатию на ESC
       var onEscDown = function (evt) {
         var target = evt.target;
         if (target.classList.contains('text__hashtags') || target.classList.contains('text__description')) {
@@ -93,7 +93,7 @@
         var submitHandler = function () {
           resultBlock = viewResultBlock(img, scale, pin, depth, templateSuccess);
           buttons = resultBlock.querySelectorAll('.success__button');
-          
+
           buttons.forEach(function (it) {
             it.addEventListener('click', onButtonsClick);
           });

@@ -6,6 +6,7 @@
   var buttonNew = imgFilters.querySelector('#filter-new');
   var buttonDiscussed = imgFilters.querySelector('#filter-discussed');
   var arr = [];
+
   // Нажатие на кнопку Популярных Фото
   var onButtonPopular = window.util.debounce(function () {
     var photos = arr.slice(0);
