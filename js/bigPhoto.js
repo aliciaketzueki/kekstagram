@@ -5,10 +5,11 @@
   var bigPictureComment = bigPictureComments.querySelector('.social__comment');
   var commentsLoader = bigPicture.querySelector('.comments-loader');
   var commentsCount = bigPicture.querySelector('.social__comment-count');
+  var openedPhoto;
   // Добавление URL, likes, описания, comments.length в разметку большой фотографии
-  var getBigPictureProperties = function (j, arr) {
-    bigPicture.querySelector('.big-picture__img').querySelector('img').src = arr[j].url;
-    bigPicture.querySelector('.likes-count').textContent = arr[j].likes;
+  var getBigPictureProperties = function () {
+    bigPicture.querySelector('.big-picture__img').querySelector('img').src = openedPhoto.url;
+    bigPicture.querySelector('.likes-count').textContent = openedPhoto.likes;
     bigPicture.querySelector('.social__caption').textContent = window.util.selectRandomElement(window.const.DESCRIPTION_ARR);
   };
   // Создание DOM-элементов для комментариев
@@ -19,37 +20,25 @@
     return photosComment;
   };
   // Добавление DOM-элементов в разметку
-  var appendDomElements = function (arr, j, start, end) {
+  var appendDomElements = function (start, end) {
     var fragment = document.createDocumentFragment();
     for (var k = start; k < end; k++) {
-      fragment.appendChild(getBigPictureComments(arr[j].comments[k]));
+      fragment.appendChild(getBigPictureComments(openedPhoto.comments[k]));
     }
     bigPictureComments.appendChild(fragment);
-    commentsCount.textContent = end + ' из ' + arr[j].comments.length + ' комментариев';
+    commentsCount.textContent = end + ' из ' + openedPhoto.comments.length + ' комментариев';
   };
-  // Функция
-
-  // Добавление комментариев
-  var addComments = function (j, arr) {
-    window.util.deleteNodeElements(bigPictureComments);
-    var number = 0;
-    var func = function () {
-      if (arr[j].comments.length <= window.const.PHOTOS_COMMENTS_VIEW + number) {
-        appendDomElements(arr, j, number, arr[j].comments.length);
-        commentsLoader.classList.add('visually-hidden');
-      } else {
-        appendDomElements(arr, j, number, window.const.PHOTOS_COMMENTS_VIEW + number);
-        commentsLoader.classList.remove('visually-hidden');
-      }
-    };
-    func();
-    // клик на "загрузить еще (комментариев)"
-    // commentsLoader.removeEventListener('click', func);
-    commentsLoader.addEventListener('click', function () {
-      number += window.const.PHOTOS_COMMENTS_VIEW;
-      func(); // при клике на новое фото это событие начинает срабатывать 2++ раз
-    });
+  // Добавление комментариев под фото
+  var addComments = function (number) {
+    if (openedPhoto.comments.length <= window.const.PHOTOS_COMMENTS_VIEW + number) {
+      appendDomElements(number, openedPhoto.comments.length);
+      commentsLoader.classList.add('hidden');
+    } else {
+      appendDomElements(number, window.const.PHOTOS_COMMENTS_VIEW + number);
+      commentsLoader.classList.remove('hidden');
+    }
   };
+  var index = 0;
 
   window.bigPhoto = {
     // 1. Большая фотография
@@ -70,21 +59,25 @@
         var onLittlePictureClick = function (evt) {
           for (var j = 0; j < arr.length; j++) {
             if (bigPictureArr[j].querySelector('img') === evt.target) {
-              getBigPictureProperties(j, arr);
-              addComments(j, arr);
+              window.util.deleteNodeElements(bigPictureComments);
+              openedPhoto = arr[j];
+              getBigPictureProperties();
+              index = 0;
+              addComments(index);
             }
           }
           bigPicture.classList.remove('hidden');
           body.classList.add('modal-open');
           document.addEventListener('keydown', onEscPress);
         };
-        // Открытие по нажатию
+        // Открытие фото по нажатию на ENTER
         var onLittlePictureDown = function (evt) {
           if (evt.keyCode === window.const.ENTER_KEYDOWN) {
             for (var j = 0; j < arr.length; j++) {
               if (bigPictureArr[j] === evt.target) {
-                getBigPictureProperties(j, arr);
-                addComments(j, arr);
+                openedPhoto = arr[j];
+                getBigPictureProperties();
+                addComments();
               }
             }
             bigPicture.classList.remove('hidden');
@@ -92,10 +85,18 @@
             document.addEventListener('keydown', onEscPress);
           }
         };
+        // клик на "загрузить еще (комментариев)"
+        var onButtonCommentsClick = function (evt) {
+          if (commentsLoader === evt.target) {
+            index += window.const.PHOTOS_COMMENTS_VIEW;
+            addComments(index);
+          }
+        };
         bigPictureArr.forEach(function (it) {
           it.addEventListener('click', onLittlePictureClick);
           it.addEventListener('keydown', onLittlePictureDown);
         });
+        commentsLoader.addEventListener('click', onButtonCommentsClick);
       };
       // Закрытие большой фотографии
       var closeBigPhoto = function () {
