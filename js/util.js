@@ -44,7 +44,7 @@
       return Math.random() - 0.5;
     },
     // Функция установки таймера
-    debounce: function (fun) {
+    debounce: function (callback) {
       var lastTimeout = null;
 
       return function () {
@@ -53,9 +53,18 @@
           window.clearTimeout(lastTimeout);
         }
         lastTimeout = window.setTimeout(function () {
-          fun.apply(null, args);
+          callback.apply(null, args);
         }, window.const.DEBOUNCE_INTERVAL);
       };
+    },
+    // Сброс настроек изображения
+    resetUploadSettings: function (img, scale, pin, depth) {
+      img.removeAttribute('class');
+      img.style = null;
+      pin.style = null;
+      depth.style = null;
+      scale.value = window.const.IMAGE_SIZE_MAX + '%';
+      window.const.IMAGE_SIZE_DEFAULT = window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX;
     }
   };
 })();

@@ -12,7 +12,9 @@
   var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
 
   window.form.changeUploadFile(imgUpload, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
-  window.form.submitForm(imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
+
+  // модуль formSubmit.js
+  window.formSubmit.submitForm(imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
 
   // модуль effects.js
   var effectsArr = [];
