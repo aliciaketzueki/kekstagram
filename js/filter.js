@@ -1,7 +1,6 @@
 'use strict';
 (function () {
   var imgFilters = document.querySelector('.img-filters');
-  imgFilters.classList.remove('img-filters--inactive');
   var buttonPopular = imgFilters.querySelector('#filter-popular');
   var buttonNew = imgFilters.querySelector('#filter-new');
   var buttonDiscussed = imgFilters.querySelector('#filter-discussed');
@@ -40,6 +39,7 @@
       arr = data;
       window.pictures.appendDomElements(arr);
       window.bigPhoto.changeBigPhoto(arr);
+      imgFilters.classList.remove('img-filters--inactive');
       // переключение классов у кнопок
       var buttons = imgFilters.querySelectorAll('.img-filters__button');
       buttons.forEach(function (it) {

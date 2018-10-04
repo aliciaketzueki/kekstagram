@@ -17,11 +17,11 @@
   window.formSubmit.submitForm(imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
 
   // модуль effects.js
-  var effectsArr = [];
+  var effects = [];
 
-  window.effects.createEffectsArr(effectsArr);
-  window.effects.changeEffects(imgUpload, imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
-  window.effects.changeFilterLevel(imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
+  window.effects.createEffectsArr(effects);
+  window.effects.changeEffects(imgUpload, imgUploadPreview, effects, pinHandle, effectLevelDepth);
+  window.effects.changeFilterLevel(imgUploadPreview, effects, pinHandle, effectLevelDepth);
   window.effects.changeImgSize(imgUpload, imgUploadPreview, scaleControlValue);
 
   // модуль validation.js
