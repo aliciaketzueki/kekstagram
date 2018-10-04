@@ -60,7 +60,7 @@
     // Удаление пустых элементов массива
     cleanArray: function (deleteValue, arr) {
       for (var i = 0; i < arr.length; i++) {
-        if (arr[i] == deleteValue) {
+        if (arr[i] === deleteValue) {
           arr.splice(i, 1);
           i--;
         }
@@ -74,7 +74,7 @@
       pin.style = null;
       depth.style = null;
       scale.value = window.const.IMAGE_SIZE_MAX + '%';
-      window.const.IMAGE_SIZE_DEFAULT = window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX;
+      window.effects.scaleNumber = window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX;
     }
   };
 })();

@@ -117,6 +117,7 @@
       });
     },
     // Изменение размеров изображения
+    scaleNumber: window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX,
     changeImgSize: function (area, img, scale) {
       var scaleControlSmaller = area.querySelector('.scale__control--smaller');
       var scaleControlBigger = area.querySelector('.scale__control--bigger');
@@ -128,8 +129,8 @@
         controlValue = parseInt(scale.value, 10);
         if (controlValue > window.const.IMAGE_SIZE_MIN) {
           scale.value = controlValue - window.const.IMAGE_SIZE_STEP + '%';
-          window.const.IMAGE_SIZE_DEFAULT -= (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          img.style = 'transform: scale(' + window.const.IMAGE_SIZE_DEFAULT + ')';
+          window.effects.scaleNumber -= (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
+          img.style = 'transform: scale(' + window.effects.scaleNumber + ')';
         }
       };
 
@@ -137,8 +138,8 @@
         controlValue = parseInt(scale.value, 10);
         if (controlValue < window.const.IMAGE_SIZE_MAX) {
           scale.value = controlValue + window.const.IMAGE_SIZE_STEP + '%';
-          window.const.IMAGE_SIZE_DEFAULT += (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          img.style = 'transform: scale(' + window.const.IMAGE_SIZE_DEFAULT + ')';
+          window.effects.scaleNumber += (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
+          img.style = 'transform: scale(' + window.effects.scaleNumber + ')';
         }
       };
 
