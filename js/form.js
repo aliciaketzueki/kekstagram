@@ -34,6 +34,7 @@
           });
           reader.readAsDataURL(file);
         }
+
         element.classList.remove('hidden');
         document.addEventListener('keydown', onEscDown);
       };

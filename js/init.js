@@ -10,6 +10,7 @@
   var scaleControlValue = imgUpload.querySelector('.scale__control--value');
   var pinHandle = imgUpload.querySelector('.effect-level__pin');
   var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
+  var effectValue = imgUpload.querySelector('.effect-level__value');
 
   window.form.changeUploadFile(imgUpload, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
 
@@ -21,7 +22,7 @@
 
   window.effects.createEffectsArr(effects);
   window.effects.changeEffects(imgUpload, imgUploadPreview, effects, pinHandle, effectLevelDepth);
-  window.effects.changeFilterLevel(imgUploadPreview, effects, pinHandle, effectLevelDepth);
+  window.effects.changeFilterLevel(imgUploadPreview, effects, pinHandle, effectLevelDepth, effectValue);
   window.effects.changeImgSize(imgUpload, imgUploadPreview, scaleControlValue);
 
   // модуль validation.js

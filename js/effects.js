@@ -76,9 +76,12 @@
       }
     },
     // Изменение уровня насыщенности
-    changeFilterLevel: function (preview, arr, pin, depth) {
+    changeFilterLevel: function (preview, arr, pin, depth, effectValue) {
       pin.addEventListener('mousedown', function (evt) {
         evt.preventDefault();
+
+        effectValue.readOnly = true; // иначе выдает ошибку
+        effectValue.value = window.const.PERCENT_MAX;
         var startCoordsX = evt.clientX;
 
         var calcCoords = function (move) {
@@ -89,6 +92,7 @@
           if (newCoordsX <= window.const.FILTER_LINE_WIDTH && newCoordsX >= 0) {
             pin.style.left = newCoordsX + 'px';
             depth.style.width = newCoordsX + 'px';
+            effectValue.value = newCoordsX * window.const.PERCENT_MAX / window.const.FILTER_LINE_WIDTH;
           }
           return newCoordsX;
         };
@@ -118,7 +122,7 @@
     },
     // Изменение размеров изображения
     scaleNumber: window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX,
-    changeImgSize: function (area, img, scale) {
+    changeImgSize: function (area, preview, scale) {
       var scaleControlSmaller = area.querySelector('.scale__control--smaller');
       var scaleControlBigger = area.querySelector('.scale__control--bigger');
 
@@ -130,7 +134,7 @@
         if (controlValue > window.const.IMAGE_SIZE_MIN) {
           scale.value = controlValue - window.const.IMAGE_SIZE_STEP + '%';
           window.effects.scaleNumber -= (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          img.style = 'transform: scale(' + window.effects.scaleNumber + ')';
+          preview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
         }
       };
 
@@ -139,7 +143,7 @@
         if (controlValue < window.const.IMAGE_SIZE_MAX) {
           scale.value = controlValue + window.const.IMAGE_SIZE_STEP + '%';
           window.effects.scaleNumber += (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          img.style = 'transform: scale(' + window.effects.scaleNumber + ')';
+          preview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
         }
       };
 
