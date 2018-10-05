@@ -66,16 +66,6 @@
         }
       }
       return arr;
-    },
-    // Сброс настроек изображения
-    resetUploadSettings: function (img, scale, pin, depth, effectValue) {
-      img.removeAttribute('class');
-      img.style = null;
-      pin.style = null;
-      depth.style = null;
-      effectValue.value = window.const.PERCENT_MAX;
-      scale.value = window.const.IMAGE_SIZE_MAX + '%';
-      window.effects.scaleNumber = window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX;
     }
   };
 })();

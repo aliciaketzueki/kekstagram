@@ -2,20 +2,19 @@
 (function () {
   var form = document.querySelector('.img-upload__form');
   var main = document.querySelector('main');
-  var imgUpload = document.querySelector('.img-upload__overlay');
   var templateSuccess = document.querySelector('#success').content.querySelector('.success');
   var templateError = document.querySelector('#error').content.querySelector('.error');
   var resultBlock;
   var buttons;
   // Показать блок успеха или неудачи
-  var viewResultBlock = function (img, scale, pin, depth, effectValue, template, errorMessage) {
-    imgUpload.classList.add('hidden');
+  var viewResultBlock = function (element, template, errorMessage) {
+    element.classList.add('hidden');
     var block = template.cloneNode(true);
     main.appendChild(block);
     if (block.querySelector('h2').classList.contains('error__title')) {
       block.querySelector('.error__title').textContent = errorMessage;
     } else {
-      window.util.resetUploadSettings(img, scale, pin, depth, effectValue);
+      window.effects.resetUploadSettings();
     }
     return block;
   };
@@ -48,12 +47,12 @@
 
   window.formSubmit = {
     // Отправка формы
-    submitForm: function (img, scale, pin, depth, effectValue) {
+    submitForm: function (element) {
       form.addEventListener('submit', function (evnt) {
         evnt.preventDefault();
         // Успешный сценарий отправки формы
         var submitHandler = function () {
-          resultBlock = viewResultBlock(img, scale, pin, depth, effectValue, templateSuccess);
+          resultBlock = viewResultBlock(element, templateSuccess);
           buttons = resultBlock.querySelectorAll('.success__button');
 
           buttons.forEach(function (it) {
@@ -64,7 +63,7 @@
         };
         // Ошибка отправки формы
         var errorHandler = function (errorMessage) {
-          resultBlock = viewResultBlock(img, scale, pin, depth, effectValue, templateError, errorMessage);
+          resultBlock = viewResultBlock(element, templateError, errorMessage);
           buttons = resultBlock.querySelectorAll('.error__button');
 
           buttons.forEach(function (it) {
