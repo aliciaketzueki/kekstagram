@@ -8,7 +8,7 @@
 
   window.form = {
     // Форма редактирования
-    changeUploadFile: function (element, img, scale, pin, depth) {
+    changeUploadFile: function (element, img, scale, pin, depth, effectValue) {
       // Закрыть форму редактирования по нажатию на ESC
       var onEscDown = function (evt) {
         var target = evt.target;
@@ -16,7 +16,7 @@
           evt.stopPropagation();
         } else if (evt.keyCode === window.const.ESC_KEYDOWN) {
           element.classList.add('hidden');
-          window.util.resetUploadSettings(img, scale, pin, depth);
+          window.util.resetUploadSettings(img, scale, pin, depth, effectValue);
           form.reset();
         }
       };
@@ -34,14 +34,13 @@
           });
           reader.readAsDataURL(file);
         }
-
         element.classList.remove('hidden');
         document.addEventListener('keydown', onEscDown);
       };
       // Клик на кнопку закрытия формы редактирования
       var onUploadFileCancelClick = function () {
         element.classList.add('hidden');
-        window.util.resetUploadSettings(img, scale, pin, depth);
+        window.util.resetUploadSettings(img, scale, pin, depth, effectValue);
         document.removeEventListener('keydown', onEscDown);
         form.reset();
       };

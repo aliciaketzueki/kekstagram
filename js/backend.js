@@ -1,6 +1,5 @@
 'use strict';
 (function () {
-
   window.backend = {
     // Загрузка данных с сервера
     uploadData: function (onLoad, onError) {

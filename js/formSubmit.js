@@ -8,14 +8,14 @@
   var resultBlock;
   var buttons;
   // Показать блок успеха или неудачи
-  var viewResultBlock = function (img, scale, pin, depth, template, errorMessage) {
+  var viewResultBlock = function (img, scale, pin, depth, effectValue, template, errorMessage) {
     imgUpload.classList.add('hidden');
     var block = template.cloneNode(true);
     main.appendChild(block);
     if (block.querySelector('h2').classList.contains('error__title')) {
       block.querySelector('.error__title').textContent = errorMessage;
     } else {
-      window.util.resetUploadSettings(img, scale, pin, depth);
+      window.util.resetUploadSettings(img, scale, pin, depth, effectValue);
     }
     return block;
   };
@@ -48,12 +48,12 @@
 
   window.formSubmit = {
     // Отправка формы
-    submitForm: function (img, scale, pin, depth) {
+    submitForm: function (img, scale, pin, depth, effectValue) {
       form.addEventListener('submit', function (evnt) {
         evnt.preventDefault();
         // Успешный сценарий отправки формы
         var submitHandler = function () {
-          resultBlock = viewResultBlock(img, scale, pin, depth, templateSuccess);
+          resultBlock = viewResultBlock(img, scale, pin, depth, effectValue, templateSuccess);
           buttons = resultBlock.querySelectorAll('.success__button');
 
           buttons.forEach(function (it) {
@@ -64,7 +64,7 @@
         };
         // Ошибка отправки формы
         var errorHandler = function (errorMessage) {
-          resultBlock = viewResultBlock(img, scale, pin, depth, templateError, errorMessage);
+          resultBlock = viewResultBlock(img, scale, pin, depth, effectValue, templateError, errorMessage);
           buttons = resultBlock.querySelectorAll('.error__button');
 
           buttons.forEach(function (it) {
