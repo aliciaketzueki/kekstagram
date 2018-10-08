@@ -4,21 +4,23 @@
   // модуль pictures.js
   window.pictures.createNewPhotosArr();
 
-  // модуль form.js
   var imgUpload = document.querySelector('.img-upload__overlay');
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
 
+  // Модуль form.js
   window.form.changeUploadFile(imgUpload, imgUploadPreview);
-  window.formSubmit.submitForm(imgUpload);
 
   // модуль effects.js
   var effects = [];
   window.effects.createEffectsArr(effects);
-  window.effects.changeEffects(effects);
-  window.effects.changeFilterLevel(effects);
-  window.effects.changeImgSize();
+  window.effects.changeEffects(effects, imgUploadPreview);
+  window.effects.changeFilterLevel(effects, imgUploadPreview);
+  window.effects.changeImgSize(imgUploadPreview);
 
   // модуль validation.js
   window.validation.checkValidityHashtags(imgUpload);
   window.validation.checkValidityText(imgUpload);
+
+  // formSubmit.js
+  window.formSubmit.submitForm(imgUpload, imgUploadPreview);
 })();

@@ -5,7 +5,8 @@
   var pinHandle = imgUpload.querySelector('.effect-level__pin');
   var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
   var effectValue = imgUpload.querySelector('.effect-level__value');
-  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
+  var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
+  var effectLevelBlock = imgUpload.querySelector('.effect-level');
   // Функция-конструктор для создания объекта эффекта
   var Effects = function (name, className) {
     this.name = name;
@@ -54,19 +55,19 @@
       return arr;
     },
     // Переключение радиокнопок с эффектами
-    changeEffects: function (arr) {
-      var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
-      var effectLevelBlock = imgUpload.querySelector('.effect-level');
-
+    changeEffects: function (arr, preview) {
+      var effectsArr = [];
+      window.effects.createEffectsArr(effectsArr);
+      
       var onEffectsRadioButtonPress = function (evt) {
-        imgUploadPreview.removeAttribute('class');
+        preview.removeAttribute('class');
         pinHandle.style.left = window.const.FILTER_LINE_WIDTH + 'px';
         effectLevelDepth.style.width = window.const.FILTER_LINE_WIDTH + 'px';
 
         for (var j = 0; j < arr.length; j++) {
           if (effectsRadioButton[j] === evt.target) {
-            imgUploadPreview.classList.add(arr[j].className);
-            imgUploadPreview.style.filter = null;
+            preview.classList.add(arr[j].className);
+            preview.style.filter = null;
           }
           if (effectsRadioButton[0] === evt.target) {
             effectLevelBlock.classList.add('hidden');
@@ -75,14 +76,13 @@
           }
         }
       };
-
-      for (var i = 0; i < effectsRadioButton.length; i++) {
-        effectsRadioButton[i].addEventListener('click', onEffectsRadioButtonPress);
-        effectsRadioButton[i].addEventListener('keydown', onEffectsRadioButtonPress);
-      }
+      effectsRadioButton.forEach(function (it) {
+        it.addEventListener('click', onEffectsRadioButtonPress);
+        it.addEventListener('keydown', onEffectsRadioButtonPress);
+      });
     },
     // Изменение уровня насыщенности
-    changeFilterLevel: function (arr) {
+    changeFilterLevel: function (arr, preview) {
       pinHandle.addEventListener('mousedown', function (evt) {
         evt.preventDefault();
 
@@ -114,8 +114,8 @@
 
           var newEffectsArr = addFilterToArr(arr, calcCoords(upEvt));
           for (var i = 0; i < arr.length; i++) {
-            if (imgUploadPreview.classList.contains(arr[i].className)) {
-              imgUploadPreview.style.filter = newEffectsArr[i].filter;
+            if (preview.classList.contains(arr[i].className)) {
+              preview.style.filter = newEffectsArr[i].filter;
             }
           }
           document.removeEventListener('mousemove', onMouseMove);
@@ -128,7 +128,7 @@
     },
     // Изменение размеров изображения
     scaleNumber: window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX,
-    changeImgSize: function () {
+    changeImgSize: function (preview) {
       var scaleControlSmaller = imgUpload.querySelector('.scale__control--smaller');
       var scaleControlBigger = imgUpload.querySelector('.scale__control--bigger');
 
@@ -140,7 +140,7 @@
         if (controlValue > window.const.IMAGE_SIZE_MIN) {
           scaleControlValue.value = controlValue - window.const.IMAGE_SIZE_STEP + '%';
           window.effects.scaleNumber -= (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          imgUploadPreview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
+          preview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
         }
       };
 
@@ -149,7 +149,7 @@
         if (controlValue < window.const.IMAGE_SIZE_MAX) {
           scaleControlValue.value = controlValue + window.const.IMAGE_SIZE_STEP + '%';
           window.effects.scaleNumber += (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          imgUploadPreview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
+          preview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
         }
       };
 
@@ -157,9 +157,9 @@
       scaleControlSmaller.addEventListener('click', onScaleControlSmallerPress);
     },
     // Сброс настроек изображения
-    resetUploadSettings: function () {
-      imgUploadPreview.removeAttribute('class');
-      imgUploadPreview.style = null;
+    resetUploadSettings: function (preview) {
+      preview.removeAttribute('class');
+      preview.style = null;
       pinHandle.style = null;
       effectLevelDepth.style = null;
       effectValue.value = window.const.PERCENT_MAX;
