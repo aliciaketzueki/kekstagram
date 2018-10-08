@@ -44,7 +44,7 @@
       return Math.random() - 0.5;
     },
     // Функция установки таймера
-    debounce: function (fun) {
+    debounce: function (callback) {
       var lastTimeout = null;
 
       return function () {
@@ -53,9 +53,19 @@
           window.clearTimeout(lastTimeout);
         }
         lastTimeout = window.setTimeout(function () {
-          fun.apply(null, args);
+          callback.apply(null, args);
         }, window.const.DEBOUNCE_INTERVAL);
       };
+    },
+    // Удаление пустых элементов массива
+    cleanArray: function (deleteValue, arr) {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] === deleteValue) {
+          arr.splice(i, 1);
+          i--;
+        }
+      }
+      return arr;
     }
   };
 })();

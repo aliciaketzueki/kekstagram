@@ -7,25 +7,18 @@
   // модуль form.js
   var imgUpload = document.querySelector('.img-upload__overlay');
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
-  var scaleControlValue = imgUpload.querySelector('.scale__control--value');
-  var pinHandle = imgUpload.querySelector('.effect-level__pin');
-  var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
 
-  window.form.changeUploadFile(imgUpload, imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
-  window.form.submitForm(imgUploadPreview, scaleControlValue, pinHandle, effectLevelDepth);
+  window.form.changeUploadFile(imgUpload, imgUploadPreview);
+  window.formSubmit.submitForm(imgUpload);
 
   // модуль effects.js
-  var effectsArr = [];
-
-  window.effects.createEffectsArr(effectsArr);
-  window.effects.changeEffects(imgUpload, imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
-  window.effects.changeFilterLevel(imgUploadPreview, effectsArr, pinHandle, effectLevelDepth);
-  window.effects.changeImgSize(imgUpload, imgUploadPreview, scaleControlValue);
+  var effects = [];
+  window.effects.createEffectsArr(effects);
+  window.effects.changeEffects(effects);
+  window.effects.changeFilterLevel(effects);
+  window.effects.changeImgSize();
 
   // модуль validation.js
   window.validation.checkValidityHashtags(imgUpload);
   window.validation.checkValidityText(imgUpload);
-
-  // модуль avatar.js
-  window.avatar.loadPreview(imgUploadPreview);
 })();

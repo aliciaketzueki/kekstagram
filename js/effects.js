@@ -1,5 +1,11 @@
 'use strict';
 (function () {
+  var imgUpload = document.querySelector('.img-upload__overlay');
+  var scaleControlValue = imgUpload.querySelector('.scale__control--value');
+  var pinHandle = imgUpload.querySelector('.effect-level__pin');
+  var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
+  var effectValue = imgUpload.querySelector('.effect-level__value');
+  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
   // Функция-конструктор для создания объекта эффекта
   var Effects = function (name, className) {
     this.name = name;
@@ -48,19 +54,19 @@
       return arr;
     },
     // Переключение радиокнопок с эффектами
-    changeEffects: function (element, preview, arr, pin, depth) {
-      var effectsRadioButton = element.querySelectorAll('.effects__radio');
-      var effectLevelBlock = element.querySelector('.effect-level');
+    changeEffects: function (arr) {
+      var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
+      var effectLevelBlock = imgUpload.querySelector('.effect-level');
 
       var onEffectsRadioButtonPress = function (evt) {
-        preview.removeAttribute('class');
-        pin.style.left = window.const.FILTER_LINE_WIDTH + 'px';
-        depth.style.width = window.const.FILTER_LINE_WIDTH + 'px';
+        imgUploadPreview.removeAttribute('class');
+        pinHandle.style.left = window.const.FILTER_LINE_WIDTH + 'px';
+        effectLevelDepth.style.width = window.const.FILTER_LINE_WIDTH + 'px';
 
         for (var j = 0; j < arr.length; j++) {
           if (effectsRadioButton[j] === evt.target) {
-            preview.classList.add(arr[j].className);
-            preview.style.filter = null;
+            imgUploadPreview.classList.add(arr[j].className);
+            imgUploadPreview.style.filter = null;
           }
           if (effectsRadioButton[0] === evt.target) {
             effectLevelBlock.classList.add('hidden');
@@ -76,19 +82,23 @@
       }
     },
     // Изменение уровня насыщенности
-    changeFilterLevel: function (preview, arr, pin, depth) {
-      pin.addEventListener('mousedown', function (evt) {
+    changeFilterLevel: function (arr) {
+      pinHandle.addEventListener('mousedown', function (evt) {
         evt.preventDefault();
+
+        effectValue.readOnly = true; // иначе выдает ошибку
+        effectValue.value = window.const.PERCENT_MAX;
         var startCoordsX = evt.clientX;
 
         var calcCoords = function (move) {
           var shift = startCoordsX - move.clientX;
           startCoordsX = move.clientX;
-          var newCoordsX = pin.offsetLeft - shift;
+          var newCoordsX = pinHandle.offsetLeft - shift;
 
           if (newCoordsX <= window.const.FILTER_LINE_WIDTH && newCoordsX >= 0) {
-            pin.style.left = newCoordsX + 'px';
-            depth.style.width = newCoordsX + 'px';
+            pinHandle.style.left = newCoordsX + 'px';
+            effectLevelDepth.style.width = newCoordsX + 'px';
+            effectValue.value = newCoordsX * window.const.PERCENT_MAX / window.const.FILTER_LINE_WIDTH;
           }
           return newCoordsX;
         };
@@ -104,11 +114,10 @@
 
           var newEffectsArr = addFilterToArr(arr, calcCoords(upEvt));
           for (var i = 0; i < arr.length; i++) {
-            if (preview.classList.contains(arr[i].className)) {
-              preview.style.filter = newEffectsArr[i].filter;
+            if (imgUploadPreview.classList.contains(arr[i].className)) {
+              imgUploadPreview.style.filter = newEffectsArr[i].filter;
             }
           }
-
           document.removeEventListener('mousemove', onMouseMove);
           document.removeEventListener('mouseup', onMouseUp);
         };
@@ -118,33 +127,44 @@
       });
     },
     // Изменение размеров изображения
-    changeImgSize: function (area, img, scale) {
-      var scaleControlSmaller = area.querySelector('.scale__control--smaller');
-      var scaleControlBigger = area.querySelector('.scale__control--bigger');
+    scaleNumber: window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX,
+    changeImgSize: function () {
+      var scaleControlSmaller = imgUpload.querySelector('.scale__control--smaller');
+      var scaleControlBigger = imgUpload.querySelector('.scale__control--bigger');
 
-      scale.value = window.const.IMAGE_SIZE_MAX + '%';
+      scaleControlValue.value = window.const.IMAGE_SIZE_MAX + '%';
       var controlValue;
 
       var onScaleControlSmallerPress = function () {
-        controlValue = parseInt(scale.value, 10);
+        controlValue = parseInt(scaleControlValue.value, 10);
         if (controlValue > window.const.IMAGE_SIZE_MIN) {
-          scale.value = controlValue - window.const.IMAGE_SIZE_STEP + '%';
-          window.const.IMAGE_SIZE_DEFAULT -= (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          img.style = 'transform: scale(' + window.const.IMAGE_SIZE_DEFAULT + ')';
+          scaleControlValue.value = controlValue - window.const.IMAGE_SIZE_STEP + '%';
+          window.effects.scaleNumber -= (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
+          imgUploadPreview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
         }
       };
 
       var onScaleControlBiggerPress = function () {
-        controlValue = parseInt(scale.value, 10);
+        controlValue = parseInt(scaleControlValue.value, 10);
         if (controlValue < window.const.IMAGE_SIZE_MAX) {
-          scale.value = controlValue + window.const.IMAGE_SIZE_STEP + '%';
-          window.const.IMAGE_SIZE_DEFAULT += (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          img.style = 'transform: scale(' + window.const.IMAGE_SIZE_DEFAULT + ')';
+          scaleControlValue.value = controlValue + window.const.IMAGE_SIZE_STEP + '%';
+          window.effects.scaleNumber += (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
+          imgUploadPreview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
         }
       };
 
       scaleControlBigger.addEventListener('click', onScaleControlBiggerPress);
       scaleControlSmaller.addEventListener('click', onScaleControlSmallerPress);
+    },
+    // Сброс настроек изображения
+    resetUploadSettings: function () {
+      imgUploadPreview.removeAttribute('class');
+      imgUploadPreview.style = null;
+      pinHandle.style = null;
+      effectLevelDepth.style = null;
+      effectValue.value = window.const.PERCENT_MAX;
+      scaleControlValue.value = window.const.IMAGE_SIZE_MAX + '%';
+      window.effects.scaleNumber = window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX;
     }
   };
 })();
