@@ -8,7 +8,7 @@
   var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
   var effectLevelBlock = imgUpload.querySelector('.effect-level');
   // Функция-конструктор для создания объекта эффекта
-  var Effects = function (name, className) {
+  var Effect = function (name, className) {
     this.name = name;
     this.className = className;
   };
@@ -44,12 +44,12 @@
   window.effects = {
     // Функция создания массива эффектов
     createEffectsArr: function (arr) {
-      var noneEffect = new Effects('none', 'effects__preview--none');
-      var chromeEffect = new Effects('chrome', 'effects__preview--chrome');
-      var sepiaEffect = new Effects('sepia', 'effects__preview--sepia');
-      var marvinEffect = new Effects('marvin', 'effects__preview--marvin');
-      var phobosEffect = new Effects('phobos', 'effects__preview--phobos');
-      var heatEffect = new Effects('heat', 'effects__preview--heat');
+      var noneEffect = new Effect('none', 'effects__preview--none');
+      var chromeEffect = new Effect('chrome', 'effects__preview--chrome');
+      var sepiaEffect = new Effect('sepia', 'effects__preview--sepia');
+      var marvinEffect = new Effect('marvin', 'effects__preview--marvin');
+      var phobosEffect = new Effect('phobos', 'effects__preview--phobos');
+      var heatEffect = new Effect('heat', 'effects__preview--heat');
 
       arr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
       return arr;

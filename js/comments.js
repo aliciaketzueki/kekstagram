@@ -8,7 +8,7 @@
   // Создание DOM-элементов для комментариев
   var getBigPictureComments = function (arrComments) {
     var photosComment = bigPictureComment.cloneNode(true);
-    photosComment.querySelector('.social__picture').src = 'img/avatar-' + window.util.getRandomArbitary(1, 6) + '.svg';
+    photosComment.querySelector('.social__picture').src = 'img/avatar-' + window.util.getRandomArbitary(window.const.AVATAR_MIN, window.const.AVATAR_MAX) + '.svg';
     photosComment.querySelector('.social__text').textContent = arrComments;
     return photosComment;
   };
@@ -51,7 +51,17 @@
         if (pictures[j] === evt.target) {
           updateBigPhotoProperties(arr, j, number, button);
         }
-      }
+      }    
+      /*
+      pictures.forEach(function (it) {
+        if (it.querySelector('img') === evt.target) {
+          updateBigPhotoProperties(arr, j, number, button);
+        }
+        if (it === evt.target) {
+          updateBigPhotoProperties(arr, j, number, button);
+        }
+      });
+      */
       bigPicture.classList.remove('hidden');
       document.body.classList.add('modal-open');
     }
