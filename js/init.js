@@ -11,10 +11,8 @@
   window.form.changeUploadFile(imgUpload, imgUploadPreview);
 
   // модуль effects.js
-  var effects = [];
-  window.effects.createEffectsArr(effects);
-  window.effects.changeEffects(effects, imgUploadPreview);
-  window.effects.changeFilterLevel(effects, imgUploadPreview);
+  window.effects.changeEffects(imgUploadPreview);
+  window.effects.changeFilterLevel(imgUploadPreview);
   window.effects.changeImgSize(imgUploadPreview);
 
   // модуль validation.js

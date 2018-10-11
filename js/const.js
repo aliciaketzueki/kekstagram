@@ -38,6 +38,7 @@
     BAD_REQUEST_ERROR_TEXT: 'Неверный запрос',
     UNAUTHORIZED_ERROR_TEXT: 'Пользователь не авторизован',
     NOT_FOUND_ERROR_TEXT: 'Ничего не найдено',
+    CONNECTION_ERROR_TEXT: 'Произошла ошибка соединения',
     TIMEOUT: 10000,
     NEW_PHOTOS_AMOUNT: 10,
     DEBOUNCE_INTERVAL: 500,
