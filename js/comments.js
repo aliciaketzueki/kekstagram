@@ -51,17 +51,7 @@
         if (pictures[j] === evt.target) {
           updateBigPhotoProperties(arr, j, number, button);
         }
-      }    
-      /*
-      pictures.forEach(function (it) {
-        if (it.querySelector('img') === evt.target) {
-          updateBigPhotoProperties(arr, j, number, button);
-        }
-        if (it === evt.target) {
-          updateBigPhotoProperties(arr, j, number, button);
-        }
-      });
-      */
+      }
       bigPicture.classList.remove('hidden');
       document.body.classList.add('modal-open');
     }

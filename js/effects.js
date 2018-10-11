@@ -21,7 +21,7 @@
       button: document.querySelector('#effect-' + effect),
       classname: 'effects__preview--' + effect,
       name: effect
-    }
+    };
   });
 
   window.effects = {
@@ -99,7 +99,7 @@
                   break;
                 default:
                   effect.filter = '';
-              };
+              }
               preview.style.filter = effect.filter;
             }
           });

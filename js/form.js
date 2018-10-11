@@ -34,7 +34,6 @@
         }
         element.classList.remove('hidden');
         document.addEventListener('keydown', onEscDown);
-        
       };
       // Клик на кнопку закрытия формы редактирования
       var onUploadFileCancelClick = function () {

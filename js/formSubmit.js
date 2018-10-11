@@ -56,7 +56,6 @@
         // Успешный сценарий отправки формы
         var submitHandler = function () {
           resultBlock = viewResultBlock(element, templateSuccess, preview);
-  
           buttons = resultBlock.querySelectorAll('.success__button');
           buttons.forEach(function (it) {
             it.addEventListener('click', onButtonsClick);
