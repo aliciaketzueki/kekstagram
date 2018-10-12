@@ -1,13 +1,12 @@
 'use strict';
 (function () {
   var form = document.querySelector('.img-upload__form');
-  var imgUpload = document.querySelector('.img-upload__overlay');
   var uploadFile = document.querySelector('#upload-file');
-  var imgUploadCancel = imgUpload.querySelector('.img-upload__cancel');
 
   window.form = {
     // Форма редактирования
     changeUploadFile: function (element, preview) {
+      var imgUploadCancel = element.querySelector('.img-upload__cancel');
       // Закрыть форму редактирования по нажатию на ESC
       var onEscDown = function (evt) {
         var target = evt.target;
@@ -15,12 +14,12 @@
           evt.stopPropagation();
         } else if (evt.keyCode === window.const.ESC_KEYDOWN) {
           element.classList.add('hidden');
-          window.effects.resetUploadSettings();
+          window.effects.resetUploadSettings(preview);
           form.reset();
         }
       };
       // Нажатие на показ формы редактирования
-      var onUploadFileClick = function () {
+      var onUploadFileChanges = function () {
         var file = uploadFile.files[0];
         var fileName = file.name.toLowerCase();
         var matches = window.const.FILE_IMG_TYPES.some(function (it) {
@@ -39,12 +38,12 @@
       // Клик на кнопку закрытия формы редактирования
       var onUploadFileCancelClick = function () {
         element.classList.add('hidden');
-        window.effects.resetUploadSettings();
+        window.effects.resetUploadSettings(preview);
         document.removeEventListener('keydown', onEscDown);
         form.reset();
       };
 
-      uploadFile.addEventListener('change', onUploadFileClick);
+      uploadFile.addEventListener('change', onUploadFileChanges);
       imgUploadCancel.addEventListener('click', onUploadFileCancelClick);
     }
   };

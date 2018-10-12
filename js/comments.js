@@ -8,7 +8,7 @@
   // Создание DOM-элементов для комментариев
   var getBigPictureComments = function (arrComments) {
     var photosComment = bigPictureComment.cloneNode(true);
-    photosComment.querySelector('.social__picture').src = 'img/avatar-' + window.util.getRandomArbitary(1, 6) + '.svg';
+    photosComment.querySelector('.social__picture').src = 'img/avatar-' + window.util.getRandomArbitary(window.const.AVATAR_MIN, window.const.AVATAR_MAX) + '.svg';
     photosComment.querySelector('.social__text').textContent = arrComments;
     return photosComment;
   };

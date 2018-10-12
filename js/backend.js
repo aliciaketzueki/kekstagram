@@ -1,40 +1,43 @@
 'use strict';
 (function () {
+  var ResponseCodeMap = {
+    200: function (res, load) {
+      load(res.response);
+    },
+    400: function (error) {
+      error(window.const.BAD_REQUEST_ERROR_TEXT);
+    },
+    401: function (error) {
+      error(window.const.UNAUTHORIZED_ERROR_TEXT);
+    },
+    404: function (error) {
+      error(window.const.NOT_FOUND_ERROR_TEXT);
+    }
+  };
+
+  var handleResponse = function (res, load, error) {
+    var status = res.status;
+    var action = ResponseCodeMap[status];
+    action(res, load, error);
+  };
+
   window.backend = {
     // Загрузка данных с сервера
     uploadData: function (onLoad, onError) {
       var url = 'https://js.dump.academy/kekstagram/data';
-
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
 
       xhr.addEventListener('load', function () {
-        switch (xhr.status) {
-          case window.const.SUCCESS_CODE:
-            onLoad(xhr.response);
-            break;
-          case window.const.BAD_REQUEST_ERROR_CODE:
-            onError('Неверный запрос');
-            break;
-          case window.const.UNAUTHORIZED_ERROR_CODE:
-            onError('Пользователь не авторизован');
-            break;
-          case window.const.NOT_FOUND_ERROR_CODE:
-            onError('Ничего не найдено');
-            break;
-          default:
-            onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-        }
+        handleResponse(xhr, onLoad, onError);
       });
-
       xhr.addEventListener('error', function () {
-        onError('Произошла ошибка соединения');
+        onError(window.const.CONNECTION_ERROR_TEXT);
       });
-
       xhr.addEventListener('timeout', function () {
         onError('Запрос не успел выполнится за ' + xhr.timeout + 'мс');
       });
-      xhr.timeout = 10000;
+      xhr.timeout = window.const.TIMEOUT;
 
       xhr.open('GET', url);
       xhr.send();
@@ -42,37 +45,19 @@
     // Отправка данных на сервер
     saveData: function (data, onLoad, onError) {
       var url = 'https://js.dump.academy/kekstagram';
-
       var xhr = new XMLHttpRequest();
       xhr.responseType = 'json';
 
       xhr.addEventListener('load', function () {
-        switch (xhr.status) {
-          case window.const.SUCCESS_CODE:
-            onLoad(xhr.response);
-            break;
-          case window.const.BAD_REQUEST_ERROR_CODE:
-            onError('Неверный запрос');
-            break;
-          case window.const.UNAUTHORIZED_ERROR_CODE:
-            onError('Пользователь не авторизован');
-            break;
-          case window.const.NOT_FOUND_ERROR_CODE:
-            onError('Ничего не найдено');
-            break;
-          default:
-            onError('Статус ответа: ' + xhr.status + ' ' + xhr.statusText);
-        }
+        handleResponse(xhr, onLoad, onError);
       });
-
       xhr.addEventListener('error', function () {
-        onError('Произошла ошибка соединения');
+        onError(window.const.CONNECTION_ERROR_TEXT);
       });
-
       xhr.addEventListener('timeout', function () {
         onError('Запрос не успел выполнится за ' + xhr.timeout + 'мс');
       });
-      xhr.timeout = 10000;
+      xhr.timeout = window.const.TIMEOUT;
 
       xhr.open('POST', url);
       xhr.send(data);

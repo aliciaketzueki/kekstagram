@@ -25,7 +25,7 @@
     appendDomElements: function (arr) {
       var pictureDestination = document.querySelector('.pictures');
       var fragment = document.createDocumentFragment();
-      var takeNumber = arr.length > 25 ? 25 : arr.length;
+      var takeNumber = arr.length > window.const.MAX_PICTURE_LENGTH ? window.const.MAX_PICTURE_LENGTH : arr.length;
       removeDomElements();
       for (var j = 0; j < takeNumber; j++) {
         fragment.appendChild(createDomElements(arr[j]));

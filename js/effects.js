@@ -5,88 +5,52 @@
   var pinHandle = imgUpload.querySelector('.effect-level__pin');
   var effectLevelDepth = imgUpload.querySelector('.effect-level__depth');
   var effectValue = imgUpload.querySelector('.effect-level__value');
-  var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
-  // Функция-конструктор для создания объекта эффекта
-  var Effects = function (name, className) {
-    this.name = name;
-    this.className = className;
-  };
-  // Функция добавления фильтров в массив эффектов
-  var addFilterToArr = function (arr, value) {
-    for (var i = 0; i < arr.length; i++) {
-      switch (arr[i].name) {
-        case 'none':
-          arr[i].filter = 'none';
-          break;
-        case 'chrome':
-          arr[i].filter = 'grayscale(' + (value / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_CHROME_MAX) + ')';
-          break;
-        case 'sepia':
-          arr[i].filter = 'sepia(' + (value / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_SEPIA_MAX) + ')';
-          break;
-        case 'marvin':
-          arr[i].filter = 'invert(' + (value / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_MARVIN_MAX) + '%)';
-          break;
-        case 'phobos':
-          arr[i].filter = 'blur(' + (value / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_PHOBOS_MAX) + 'px)';
-          break;
-        case 'heat':
-          arr[i].filter = 'brightness(' + (value / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_HEAT_MAX - window.const.EFFECTS_HEAT_MIN) + ')';
-          break;
-        default:
-          arr[i].filter = '';
-      }
-    }
-    return arr;
-  };
+  var effectLevelBlock = imgUpload.querySelector('.effect-level');
+  // Массив эффектов
+  var EFFECT_NAMES = [
+    'none',
+    'chrome',
+    'sepia',
+    'marvin',
+    'phobos',
+    'heat'
+  ];
+
+  var effects = EFFECT_NAMES.map(function (effect) {
+    return {
+      button: document.querySelector('#effect-' + effect),
+      classname: 'effects__preview--' + effect,
+      name: effect
+    };
+  });
 
   window.effects = {
-    // Функция создания массива эффектов
-    createEffectsArr: function (arr) {
-      var noneEffect = new Effects('none', 'effects__preview--none');
-      var chromeEffect = new Effects('chrome', 'effects__preview--chrome');
-      var sepiaEffect = new Effects('sepia', 'effects__preview--sepia');
-      var marvinEffect = new Effects('marvin', 'effects__preview--marvin');
-      var phobosEffect = new Effects('phobos', 'effects__preview--phobos');
-      var heatEffect = new Effects('heat', 'effects__preview--heat');
-
-      arr.push(noneEffect, chromeEffect, sepiaEffect, marvinEffect, phobosEffect, heatEffect);
-      return arr;
-    },
     // Переключение радиокнопок с эффектами
-    changeEffects: function (arr) {
-      var effectsRadioButton = imgUpload.querySelectorAll('.effects__radio');
-      var effectLevelBlock = imgUpload.querySelector('.effect-level');
-
-      var onEffectsRadioButtonPress = function (evt) {
-        imgUploadPreview.removeAttribute('class');
-        pinHandle.style.left = window.const.FILTER_LINE_WIDTH + 'px';
-        effectLevelDepth.style.width = window.const.FILTER_LINE_WIDTH + 'px';
-
-        for (var j = 0; j < arr.length; j++) {
-          if (effectsRadioButton[j] === evt.target) {
-            imgUploadPreview.classList.add(arr[j].className);
-            imgUploadPreview.style.filter = null;
-          }
-          if (effectsRadioButton[0] === evt.target) {
+    changeEffects: function (preview) {
+      effects.forEach(function (effect) {
+        var onEffectsButtonPress = function () {
+          preview.removeAttribute('class');
+          pinHandle.style.left = window.const.FILTER_LINE_WIDTH + 'px';
+          effectLevelDepth.style.width = window.const.FILTER_LINE_WIDTH + 'px';
+          preview.style.filter = null;
+          preview.classList.add(effect.classname);
+          if (effect.name === 'none') {
             effectLevelBlock.classList.add('hidden');
           } else {
             effectLevelBlock.classList.remove('hidden');
           }
-        }
-      };
+        };
 
-      for (var i = 0; i < effectsRadioButton.length; i++) {
-        effectsRadioButton[i].addEventListener('click', onEffectsRadioButtonPress);
-        effectsRadioButton[i].addEventListener('keydown', onEffectsRadioButtonPress);
-      }
+        effect.button.addEventListener('click', onEffectsButtonPress);
+        effect.button.addEventListener('keydown', onEffectsButtonPress);
+      });
     },
     // Изменение уровня насыщенности
-    changeFilterLevel: function (arr) {
+    changeFilterLevel: function (preview) {
       pinHandle.addEventListener('mousedown', function (evt) {
         evt.preventDefault();
 
-        effectValue.readOnly = true; // иначе выдает ошибку
+        effectValue.readOnly = true;
         effectValue.value = window.const.PERCENT_MAX;
         var startCoordsX = evt.clientX;
 
@@ -112,12 +76,34 @@
           upEvt.preventDefault();
           calcCoords(upEvt);
 
-          var newEffectsArr = addFilterToArr(arr, calcCoords(upEvt));
-          for (var i = 0; i < arr.length; i++) {
-            if (imgUploadPreview.classList.contains(arr[i].className)) {
-              imgUploadPreview.style.filter = newEffectsArr[i].filter;
+          effects.forEach(function (effect) {
+            if (preview.classList.contains(effect.classname)) {
+              switch (effect.name) {
+                case 'none':
+                  effect.filter = effect.name;
+                  break;
+                case 'chrome':
+                  effect.filter = 'grayscale(' + (calcCoords(upEvt) / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_CHROME_MAX) + ')';
+                  break;
+                case 'sepia':
+                  effect.filter = 'sepia(' + (calcCoords(upEvt) / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_SEPIA_MAX) + ')';
+                  break;
+                case 'marvin':
+                  effect.filter = 'invert(' + (calcCoords(upEvt) / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_MARVIN_MAX) + '%)';
+                  break;
+                case 'phobos':
+                  effect.filter = 'blur(' + (calcCoords(upEvt) / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_PHOBOS_MAX) + 'px)';
+                  break;
+                case 'heat':
+                  effect.filter = 'brightness(' + (calcCoords(upEvt) / window.const.FILTER_LINE_WIDTH * window.const.EFFECTS_HEAT_MAX - window.const.EFFECTS_HEAT_MIN) + ')';
+                  break;
+                default:
+                  effect.filter = '';
+              }
+              preview.style.filter = effect.filter;
             }
-          }
+          });
+
           document.removeEventListener('mousemove', onMouseMove);
           document.removeEventListener('mouseup', onMouseUp);
         };
@@ -128,7 +114,7 @@
     },
     // Изменение размеров изображения
     scaleNumber: window.const.IMAGE_SIZE_MAX / window.const.PERCENT_MAX,
-    changeImgSize: function () {
+    changeImgSize: function (preview) {
       var scaleControlSmaller = imgUpload.querySelector('.scale__control--smaller');
       var scaleControlBigger = imgUpload.querySelector('.scale__control--bigger');
 
@@ -140,7 +126,7 @@
         if (controlValue > window.const.IMAGE_SIZE_MIN) {
           scaleControlValue.value = controlValue - window.const.IMAGE_SIZE_STEP + '%';
           window.effects.scaleNumber -= (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          imgUploadPreview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
+          preview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
         }
       };
 
@@ -149,7 +135,7 @@
         if (controlValue < window.const.IMAGE_SIZE_MAX) {
           scaleControlValue.value = controlValue + window.const.IMAGE_SIZE_STEP + '%';
           window.effects.scaleNumber += (window.const.IMAGE_SIZE_STEP / window.const.PERCENT_MAX);
-          imgUploadPreview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
+          preview.style.transform = 'scale(' + window.effects.scaleNumber + ')';
         }
       };
 
@@ -157,9 +143,9 @@
       scaleControlSmaller.addEventListener('click', onScaleControlSmallerPress);
     },
     // Сброс настроек изображения
-    resetUploadSettings: function () {
-      imgUploadPreview.removeAttribute('class');
-      imgUploadPreview.style = null;
+    resetUploadSettings: function (preview) {
+      preview.removeAttribute('class');
+      preview.style = null;
       pinHandle.style = null;
       effectLevelDepth.style = null;
       effectValue.value = window.const.PERCENT_MAX;

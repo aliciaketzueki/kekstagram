@@ -10,6 +10,14 @@
     }
     return letter;
   };
+  // Граница поля при ошибке
+  var setBorder = function (element) {
+    if (!element.reportValidity()) {
+      element.style.border = '2px solid red';
+    } else {
+      element.style.border = '';
+    }
+  };
 
   window.validation = {
     // Валидация хэш-тегов
@@ -40,6 +48,10 @@
             target.setCustomValidity('');
           }
         }
+        if (hashtags.length === 0) {
+          target.setCustomValidity('');
+        }
+        setBorder(textHashtag);
       });
     },
     // Валидация комментария
@@ -53,6 +65,7 @@
         } else {
           target.setCustomValidity('');
         }
+        setBorder(textDescription);
       });
     }
   };
