@@ -15,11 +15,8 @@
   // Нажатие на кнопку Новых Фото
   var onButtonNew = window.util.debounce(function () {
     var photos = pictures.slice(0);
-    photos.sort(window.util.compareRandom);
-    var newPhotos = [];
-    for (var i = 0; i < window.const.NEW_PHOTOS_AMOUNT; i++) {
-      newPhotos.push(photos[i]);
-    }
+    var newPhotos = photos.sort(window.util.compareRandom).slice(0, window.const.NEW_PICTURE_LENGTH);
+
     window.pictures.appendDomElements(newPhotos);
     window.bigPhoto.changeBigPhoto(newPhotos);
   });
