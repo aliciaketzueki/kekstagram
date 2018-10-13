@@ -4,17 +4,17 @@
   var buttonPopular = imgFilters.querySelector('#filter-popular');
   var buttonNew = imgFilters.querySelector('#filter-new');
   var buttonDiscussed = imgFilters.querySelector('#filter-discussed');
-  var arr = [];
+  var pictures = [];
 
   // Нажатие на кнопку Популярных Фото
   var onButtonPopular = window.util.debounce(function () {
-    var photos = arr.slice(0);
+    var photos = pictures.slice(0);
     window.pictures.appendDomElements(photos);
     window.bigPhoto.changeBigPhoto(photos);
   });
   // Нажатие на кнопку Новых Фото
   var onButtonNew = window.util.debounce(function () {
-    var photos = arr.slice(0);
+    var photos = pictures.slice(0);
     photos.sort(window.util.compareRandom);
     var newPhotos = [];
     for (var i = 0; i < window.const.NEW_PHOTOS_AMOUNT; i++) {
@@ -25,7 +25,7 @@
   });
   // Нажатие на кнопку Обсуждаемых Фото
   var onButtonDiscussed = window.util.debounce(function () {
-    var photos = arr.slice(0);
+    var photos = pictures.slice(0);
     photos.sort(function (first, second) {
       return second.comments.length - first.comments.length;
     });
@@ -36,9 +36,9 @@
   window.filter = {
     // 1. Успешное добавление фото в разметку
     successHandler: function (data) {
-      arr = data;
-      window.pictures.appendDomElements(arr);
-      window.bigPhoto.changeBigPhoto(arr);
+      pictures = data;
+      window.pictures.appendDomElements(pictures);
+      window.bigPhoto.changeBigPhoto(pictures);
       imgFilters.classList.remove('img-filters--inactive');
       // переключение классов у кнопок
       var buttons = imgFilters.querySelectorAll('.img-filters__button');
@@ -66,7 +66,7 @@
     // 2. Ошибка добавления
     errorHandler: function (errorMessage) {
       var node = document.createElement('div');
-      node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: red;';
+      node.style = 'z-index: 100; margin: 0 auto; text-align: center;';
       node.style.position = 'absolute';
       node.style.left = 0;
       node.style.right = 0;

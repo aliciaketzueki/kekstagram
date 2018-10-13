@@ -76,7 +76,7 @@
         };
 
         var formData = new FormData(form);
-        window.backend.saveData(formData, submitHandler, errorHandler);
+        window.backend.saveData(submitHandler, errorHandler, formData);
       });
     }
   };

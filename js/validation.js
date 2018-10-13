@@ -26,8 +26,7 @@
 
       textHashtag.addEventListener('input', function (evt) {
         var target = evt.target;
-        var hashtags = target.value.toLowerCase().split(' ');
-        window.util.cleanArray('', hashtags);
+        var hashtags = target.value.toLowerCase().split(' ').filter(Boolean);
 
         for (var i = 0; i < hashtags.length; i++) {
           var currentHashtag = hashtags[i];
