@@ -56,6 +56,17 @@
           callback.apply(null, args);
         }, window.const.DEBOUNCE_INTERVAL);
       };
+    },
+    // Удаление пустых элементов массива
+    cleanArray: function (deleteValue, arr) {
+      var newArr;
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i] === deleteValue) {
+          newArr = arr.splice(i, 1);
+          i--;
+        }
+      }
+      return newArr;
     }
   };
 })();

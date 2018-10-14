@@ -119,12 +119,8 @@
           document.addEventListener('click', onDocumentClick);
         };
 
-        try {
-          var formData = new FormData(form);
-          window.backend.saveData(submitHandler, errorHandler, formData);
-        } catch (err) {
-          errorHandler(window.const.INTERNAL_SERVER_ERROR_TEXT);
-        }
+        var formData = new FormData(form);
+        window.backend.saveData(submitHandler, errorHandler, formData);
       });
     }
   };
