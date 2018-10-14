@@ -1,15 +1,5 @@
 'use strict';
 (function () {
-  // Поиск символа в строке
-  var checkLetters = function (arr, symbol) {
-    var letter = 0;
-    for (var j = 1; j <= arr.length; j++) {
-      if (arr.charAt(j) === symbol) {
-        letter++;
-      }
-    }
-    return letter;
-  };
   // Граница поля при ошибке
   var setBorder = function (element) {
     if (!element.reportValidity()) {
@@ -27,23 +17,29 @@
       textHashtag.addEventListener('input', function (evt) {
         var target = evt.target;
         var hashtags = target.value.toLowerCase().split(' ');
-        window.util.cleanArray('', hashtags);
+        hashtags = window.util.cleanArray('', hashtags);
 
         for (var i = 0; i < hashtags.length; i++) {
           var currentHashtag = hashtags[i];
 
           if (currentHashtag.charAt(0) !== '#') {
             target.setCustomValidity('Хэш-теги должны начинаться с символа #');
-          } else if (checkLetters(currentHashtag, '#') > 0) {
+            break;
+          } else if (currentHashtag.indexOf('#', 1) !== -1) {
             target.setCustomValidity('Хэш-теги должны разделяться пробелом');
+            break;
           } else if (currentHashtag.length < window.const.HASHTAG_MIN_LENGTH) {
             target.setCustomValidity('Хэш-тег не может состоять из одной решётки');
+            break;
           } else if (currentHashtag.length > window.const.HASHTAG_MAX_LENGTH) {
             target.setCustomValidity('Длина хэш-тега не должна быть больше ' + window.const.HASHTAG_MAX_LENGTH + ' символов');
+            break;
           } else if (hashtags.length > window.const.HASHTAG_AMOUNT) {
             target.setCustomValidity('Нельзя указать больше ' + window.const.HASHTAG_AMOUNT + ' хэш-тегов');
+            break;
           } else if (window.util.calcRepeats(hashtags) > 0) {
             target.setCustomValidity('Хэш-теги не могут повторяться');
+            break;
           } else {
             target.setCustomValidity('');
           }

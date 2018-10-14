@@ -59,13 +59,14 @@
     },
     // Удаление пустых элементов массива
     cleanArray: function (deleteValue, arr) {
-      for (var i = 0; i < arr.length; i++) {
-        if (arr[i] === deleteValue) {
-          arr.splice(i, 1);
+      var newArr = arr.slice(0);
+      for (var i = 0; i < newArr.length; i++) {
+        if (newArr[i] === deleteValue) {
+          newArr.splice(i, 1);
           i--;
         }
       }
-      return arr;
+      return newArr;
     }
   };
 })();
