@@ -28,7 +28,7 @@
   };
 
   window.bigPhoto = {
-    // 1. Большая фотография
+    // Большая фотография
     changeBigPhoto: function (arr) {
       var bigPictureArr = document.querySelectorAll('.picture');
       var bigPictureCancel = bigPicture.querySelector('.big-picture__cancel');

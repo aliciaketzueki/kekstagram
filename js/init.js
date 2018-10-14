@@ -7,9 +7,6 @@
   var imgUpload = document.querySelector('.img-upload__overlay');
   var imgUploadPreview = imgUpload.querySelector('.img-upload__preview').querySelector('img');
 
-  // Модуль form.js
-  window.form.changeUploadFile(imgUpload, imgUploadPreview);
-
   // модуль effects.js
   window.effects.changeEffects(imgUploadPreview);
   window.effects.changeFilterLevel(imgUploadPreview);
@@ -19,6 +16,7 @@
   window.validation.checkValidityHashtags(imgUpload);
   window.validation.checkValidityText(imgUpload);
 
-  // formSubmit.js
-  window.formSubmit.submitForm(imgUpload, imgUploadPreview);
+  // Модуль form.js
+  window.form.changeUploadFile(imgUpload, imgUploadPreview);
+  window.form.submitForm(imgUpload, imgUploadPreview);
 })();

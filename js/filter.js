@@ -31,7 +31,7 @@
   });
 
   window.filter = {
-    // 1. Успешное добавление фото в разметку
+    // Успешное добавление фото в разметку
     successHandler: function (data) {
       pictures = data;
       window.pictures.appendDomElements(pictures);
@@ -60,10 +60,10 @@
       buttonDiscussed.addEventListener('click', onButtonDiscussed);
     },
 
-    // 2. Ошибка добавления
+    // Ошибка добавления
     errorHandler: function (errorMessage) {
       var node = document.createElement('div');
-      node.style = 'z-index: 100; margin: 0 auto; text-align: center;';
+      node.style = 'z-index: 100; margin: 10px auto; text-align: center;';
       node.style.position = 'absolute';
       node.style.left = 0;
       node.style.right = 0;

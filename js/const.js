@@ -40,6 +40,7 @@
     UNAUTHORIZED_ERROR_TEXT: 'Пользователь не авторизован',
     NOT_FOUND_ERROR_TEXT: 'Ничего не найдено',
     CONNECTION_ERROR_TEXT: 'Произошла ошибка соединения',
+    INTERNAL_SERVER_ERROR_TEXT: 'Внутренняя ошибка сервера',
     TIMEOUT: 10000,
     NEW_PHOTOS_AMOUNT: 10,
     DEBOUNCE_INTERVAL: 500,
