@@ -20,6 +20,16 @@
     }
     return block;
   };
+  // Успешный сценарий отправки формы
+  var formHandler = function (element, template, preview, className, errorMessage) {
+    resultBlock = viewResultBlock(element, template, preview, errorMessage);
+    buttons = resultBlock.querySelectorAll(className);
+    buttons.forEach(function (it) {
+      it.addEventListener('click', onButtonsClick);
+    });
+    document.addEventListener('keydown', onEscPress);
+    document.addEventListener('click', onDocumentClick);
+  };
   // Закрыть блок результата по нажатию на кнопку(и)
   var onButtonsClick = function () {
     form.reset();
@@ -89,39 +99,23 @@
         document.removeEventListener('keydown', onEscDown);
         form.reset();
       };
-
-      uploadFile.addEventListener('change', onUploadFileChanges);
-      imgUploadCancel.addEventListener('click', onUploadFileCancelClick);
-    },
-    // Отправка формы
-    submitForm: function (element, preview) {
-      form.addEventListener('submit', function (evnt) {
+      // Нажатие на отправку формы
+      var onFormSubmit = function (evnt) {
         evnt.preventDefault();
-        // Успешный сценарий отправки формы
         var submitHandler = function () {
-          resultBlock = viewResultBlock(element, templateSuccess, preview);
-          buttons = resultBlock.querySelectorAll('.success__button');
-          buttons.forEach(function (it) {
-            it.addEventListener('click', onButtonsClick);
-          });
-          document.addEventListener('keydown', onEscPress);
-          document.addEventListener('click', onDocumentClick);
+          formHandler(element, templateSuccess, preview, '.success__button');
         };
-        // Ошибка отправки формы
         var errorHandler = function (errorMessage) {
-          resultBlock = viewResultBlock(element, templateError, preview, errorMessage);
-          buttons = resultBlock.querySelectorAll('.error__button');
-
-          buttons.forEach(function (it) {
-            it.addEventListener('click', onButtonsClick);
-          });
-          document.addEventListener('keydown', onEscPress);
-          document.addEventListener('click', onDocumentClick);
+          formHandler(element, templateError, preview, '.error__button', errorMessage);
         };
 
         var formData = new FormData(form);
         window.backend.saveData(submitHandler, errorHandler, formData);
-      });
+      };
+
+      uploadFile.addEventListener('change', onUploadFileChanges);
+      imgUploadCancel.addEventListener('click', onUploadFileCancelClick);
+      form.addEventListener('submit', onFormSubmit);
     }
   };
 })();

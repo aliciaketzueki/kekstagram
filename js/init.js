@@ -18,5 +18,4 @@
 
   // Модуль form.js
   window.form.changeUploadFile(imgUpload, imgUploadPreview);
-  window.form.submitForm(imgUpload, imgUploadPreview);
 })();
